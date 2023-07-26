@@ -1,0 +1,23 @@
+set_robust_list(0xb657751c, 12)         = 0
+prctl(PR_SET_NAME, "miss_login\0\0CS2:") = 0
+rt_sigaction(SIGCHLD, NULL, {0xb6b9d24c, ~[KILL STOP RTMIN RT_1], SA_RESTORER|SA_RESTART, 0xb6a7ed6b}, 8) = 0
+nanosleep({1, 0}, 0xb6576e4c)           = 0
+gettimeofday({1689622802, 999189}, NULL) = 0
+gettimeofday({1689622802, 999270}, NULL) = 0
+gettimeofday({1689622802, 999340}, NULL) = 0
+gettimeofday({1689622802, 999428}, NULL) = 0
+rt_sigaction(SIGCHLD, NULL, {0xb6b9d24c, ~[KILL STOP RTMIN RT_1], SA_RESTORER|SA_RESTART, 0xb6a7ed6b}, 8) = 0
+nanosleep({1, 0}, 0xb6576e4c)           = 0
+gettimeofday({1689622804, 199624}, NULL) = 0
+rt_sigaction(SIGCHLD, NULL, {0xb6b9d24c, ~[KILL STOP RTMIN RT_1], SA_RESTORER|SA_RESTART, 0xb6a7ed6b}, 8) = 0
+nanosleep({1, 0}, 0xb6576e4c)           = 0
+gettimeofday({1689622805, 200430}, NULL) = 0
+rt_sigaction(SIGCHLD, NULL, {0xb6b9d24c, ~[KILL STOP RTMIN RT_1], SA_RESTORER|SA_RESTART, 0xb6a7ed6b}, 8) = 0
+nanosleep({1, 0}, 0xb6576e4c)           = 0
+gettimeofday({1689622806, 202912}, NULL) = 0
+rt_sigaction(SIGCHLD, NULL, {0xb6b9d24c, ~[KILL STOP RTMIN RT_1], SA_RESTORER|SA_RESTART, 0xb6a7ed6b}, 8) = 0
+nanosleep({1, 0}, 0xb6576e4c)           = 0
+gettimeofday({1689622807, 203738}, NULL) = 0
+rt_sigaction(SIGCHLD, NULL, {0xb6b9d24c, ~[KILL STOP RTMIN RT_1], SA_RESTORER|SA_RESTART, 0xb6a7ed6b}, 8) = 0
+nanosleep({1, 0},  <unfinished ...>
++++ killed by SIGINT +++

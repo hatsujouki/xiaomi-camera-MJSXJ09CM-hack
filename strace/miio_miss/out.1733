@@ -1,0 +1,236 @@
+set_robust_list(0xb673751c, 12)         = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+select(17, [16], NULL, NULL, {0, 50000}) = 1 (in [16], left {0, 41664})
+recvfrom(16, "\361\1\0\20\0\2*\333\370\366\31_\0\0\0\0\0\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.68")}, [16]) = 20
+socket(PF_INET, SOCK_DGRAM, IPPROTO_IP) = 17
+connect(17, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.68")}, 16) = 0
+getsockname(17, {sa_family=AF_INET, sin_port=htons(39805), sin_addr=inet_addr("192.168.1.70")}, [16]) = 0
+close(17)                               = 0
+getsockname(16, {sa_family=AF_INET, sin_port=htons(20630), sin_addr=inet_addr("0.0.0.0")}, [16]) = 0
+open("/etc/hosts", O_RDONLY)            = 17
+ioctl(17, TCGETS, 0xb6736380)           = -1 ENOTTY (Not a tty)
+read(17, "127.0.0.1\tlocalhost\n127.0.1.1\tmijia_camera\n", 4096) = 43
+read(17, "", 4096)                      = 0
+close(17)                               = 0
+select(17, [16], NULL, NULL, {0, 50000}) = 1 (in [16], left {0, 49973})
+recvfrom(16, "\361\1\0\20\0\2*\333\370\366\31_\0\0\0\0\0\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.186")}, [16]) = 20
+socket(PF_INET, SOCK_DGRAM, IPPROTO_IP) = 17
+connect(17, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.186")}, 16) = 0
+getsockname(17, {sa_family=AF_INET, sin_port=htons(33565), sin_addr=inet_addr("192.168.1.70")}, [16]) = 0
+close(17)                               = 0
+getsockname(16, {sa_family=AF_INET, sin_port=htons(20630), sin_addr=inet_addr("0.0.0.0")}, [16]) = 0
+open("/etc/hosts", O_RDONLY)            = 17
+ioctl(17, TCGETS, 0xb6736380)           = -1 ENOTTY (Not a tty)
+read(17, "127.0.0.1\tlocalhost\n127.0.1.1\tmijia_camera\n", 4096) = 43
+read(17, "", 4096)                      = 0
+close(17)                               = 0
+select(17, [16], NULL, NULL, {0, 50000}) = 1 (in [16], left {0, 49988})
+recvfrom(16, "\361\1\0\20\0\2*\333\370\366\31_\0\0\0\0\0\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.216")}, [16]) = 20
+socket(PF_INET, SOCK_DGRAM, IPPROTO_IP) = 17
+connect(17, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.216")}, 16) = 0
+getsockname(17, {sa_family=AF_INET, sin_port=htons(44451), sin_addr=inet_addr("192.168.1.70")}, [16]) = 0
+close(17)                               = 0
+getsockname(16, {sa_family=AF_INET, sin_port=htons(20630), sin_addr=inet_addr("0.0.0.0")}, [16]) = 0
+open("/etc/hosts", O_RDONLY)            = 17
+ioctl(17, TCGETS, 0xb6736380)           = -1 ENOTTY (Not a tty)
+read(17, "127.0.0.1\tlocalhost\n127.0.1.1\tmijia_camera\n", 4096) = 43
+read(17, "", 4096)                      = 0
+close(17)                               = 0
+select(17, [16], NULL, NULL, {0, 50000}) = 1 (in [16], left {0, 49985})
+recvfrom(16, "\361\23\0\10h\206?N\235AWm", 1440, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.68")}, [16]) = 12
+gettimeofday({1689622804, 248957}, NULL) = 0
+select(17, [16], NULL, NULL, {0, 50000}) = 1 (in [16], left {0, 49992})
+recvfrom(16, "\361\23\0\10h\206?N\235AWm", 1440, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.186")}, [16]) = 12
+gettimeofday({1689622804, 252570}, NULL) = 0
+select(17, [16], NULL, NULL, {0, 50000}) = 1 (in [16], left {0, 49985})
+recvfrom(16, "\361\23\0\10h\206?N\235AWm", 1440, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.216")}, [16]) = 12
+gettimeofday({1689622804, 255473}, NULL) = 0
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 1 (in [16], left {0, 4586})
+recvfrom(16, "\361\23\0\10h\206?N\235AWm", 1440, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.68")}, [16]) = 12
+gettimeofday({1689622805, 544248}, NULL) = 0
+select(17, [16], NULL, NULL, {0, 50000}) = 1 (in [16], left {0, 49988})
+recvfrom(16, "\361\23\0\10h\206?N\235AWm", 1440, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.186")}, [16]) = 12
+gettimeofday({1689622805, 544770}, NULL) = 0
+select(17, [16], NULL, NULL, {0, 50000}) = 1 (in [16], left {0, 49990})
+recvfrom(16, "\361\23\0\10h\206?N\235AWm", 1440, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.216")}, [16]) = 12
+gettimeofday({1689622805, 545210}, NULL) = 0
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 1 (in [16], left {0, 40196})
+recvfrom(16, "\361\23\0\10h\206?N\235AWm", 1440, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.186")}, [16]) = 12
+gettimeofday({1689622807, 641254}, NULL) = 0
+select(17, [16], NULL, NULL, {0, 50000}) = 1 (in [16], left {0, 49986})
+recvfrom(16, "\361\23\0\10h\206?N\235AWm", 1440, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.68")}, [16]) = 12
+gettimeofday({1689622807, 641685}, NULL) = 0
+select(17, [16], NULL, NULL, {0, 50000}) = 1 (in [16], left {0, 49989})
+recvfrom(16, "\361\23\0\10h\206?N\235AWm", 1440, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.216")}, [16]) = 12
+gettimeofday({1689622807, 643482}, NULL) = 0
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 50000} <unfinished ...>
++++ killed by SIGINT +++

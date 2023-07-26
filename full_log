@@ -1,0 +1,1145 @@
+анализ камеры:
+сеть - 192.168.1.0/24
+адрес шлюза после ресета: 192.168.1.1
+все tcp порты закрыты, открыт 54321 udp порт - порт протокола mii home
+    https://github.com/OpenMiHome/mihome-binary-protocol/blob/master/doc/PROTOCOL.md
+для общения по протоколу нужно знать токен устройства. Есть инструкция по извлечению токенов
+    https://github.com/Maxmudjon/com.xiaomi-miio/blob/master/docs/obtain_token.md
+
+0000   c4 6e 1f 27 1f 0d 78 8b 2a d5 c4 82 08 00 45 00   .n.'..x.*.....E.
+0010   00 3c 29 5d 40 00 40 11 73 f7 c0 a8 0e 01 c0 a8   .<)]@.@.s.......
+0020   0e 0b d4 31 df 9f 00 28 66 79 21 31 00 20 00 00   ...1...(fy!1. ..
+0030   00 00 16 25 6c 19 00 00 06 8e 59 50 50 7a 44 73   ...%l.....YPPzDs
+0040   6c 42 4a 78 5a 31 38 68 66 46                     lBJxZ18hfF
+
+последние 16 байт - 5950507a44736c424a785a3138686646
+это и есть токен
+Важное замечание! Токен перегенерируется новый на устройстве каждый раз после ресета
+сейчас - такой 6a5735454c46376a6549563756346154
+НО
+этот токен действителен только до момента пока, камера не настроена и не подключена по wifi. Потом в ходе настройки она меняет свой токен и его уже нельзя узнать потому что в ответ на команду nc он отвечает нулями
+
+до момента, как камера настроена можно поуправлять через консоль камерой - например вот так
+    miiocli chuangmicamera --ip 192.168.14.1 --token 4d4e6630436b553633565577685a4d4e rotate right
+тут работает модуль https://github.com/rytilahti/python-miio/blob/master/miio/chuangmi_camera.py
+но список команд небольшой - повороты камеры, поворот экрана, подсветка, алярм, да и всё.
+
+Нашел интересную репу 
+    https://github.com/hacefresko/Xiaomi-Mi-360-UART-shell
+Кажется там чел смог написать скрипт, который коннектит в шелл через уарт по usb, но это не точно
+
+детальный разбор камеры https://github.com/SungurLabs/sungurlabs.github.io/blob/6043366d497943e0a246a6a420ba8fb2adfcef31/_posts/2021-07-14-Xiaomi-Smart-Camera---Recovering-Firmware-and-Backdooring.md
+
+модель камеры MJSXJ09CM
+версия прошивки камеры: 4.1.2_0281
+==============================================
+пришел программатор с прищепкой
+
+прошил в нем бэкдор в виде телнета по сохраненной инструкции с https://github.com/SungurLabs/sungurlabs.github.io/blob/6043366d497943e0a246a6a420ba8fb2adfcef31/_posts/2021-07-14-Xiaomi-Smart-Camera---Recovering-Firmware-and-Backdooring.md
+при начале просмотра на телефоне изображения с камеры никаких новых соединений через netstat -anut не появляется
+камера постоянно держит коннект с 107.155.53.214:443
+адрес принадлежит Zenlayer Inc, являющейся клауд провайдером. Очевидно на его мощностях и происходит трансляция и хранение видео.
+подключил sd карту и посмотрел, кто держит файлы. Соответственно, кто управляет видеопотоком. 
+Это оказалась
+    632     /mnt/data/bin/miio_record       /mnt/sdcard/MIJIA_RECORD_VIDEO/tmp.mp4
+при убийстве процесс сразу же перезапускается (контролируется init-ом?, UPD: не init)
+так же если снять X права с бинаря - запись останавливается, но трансляция не прерывается.
+таким образом останавливал и запускал бинарь и смотрел, какие коннекты по сокетам пропадают.
+TCP и UDP коннекты не показали различий. Зато появились разлиция на unix сокетах.
+
+адрес unix сокета               тип сокета  кто слушает сокет   кто подключен к сокету
+/tmp/mortox.socket              STREAM      580/mortoxd         
+/run/jpeg_snap/control          SEQPACKET   591/fetch_av
+/run/md_event/control           SEQPACKET   599/miio_algo
+/run/video_mainstream/control   SEQPACKET   591/fetch_av
+/run/audio_in/control           SEQPACKET   591/fetch_av
+
+-unix  20     [ ]         DGRAM                       238 362/syslogd         /dev/log
++unix  19     [ ]         DGRAM                       238 362/syslogd         /dev/log
+-unix  3      [ ]         STREAM     CONNECTED     2502732 580/mortoxd         /tmp/mortox.socket
+-unix  3      [ ]         SEQPACKET  CONNECTED     2502745 591/fetch_av        /run/jpeg_snap/control
+-unix  3      [ ]         SEQPACKET  CONNECTED     2502742 599/miio_algo       /run/md_event/control
+-unix  3      [ ]         SEQPACKET  CONNECTED     2502736 591/fetch_av        /run/video_mainstream/control
+-unix  3      [ ]         SEQPACKET  CONNECTED     2502739 591/fetch_av        /run/audio_in/control
+
+miio_record подключался к сокету
+видно, что она подключалась к рядк сокетов, но сложно понять, к каким
+-unix  3      [ ]         SEQPACKET  CONNECTED     2502744 3489/miio_record    
+-unix  3      [ ]         SEQPACKET  CONNECTED     2502738 3489/miio_record    
+-unix  3      [ ]         STREAM     CONNECTED     2502731 3489/miio_record   
+-unix  3      [ ]         SEQPACKET  CONNECTED     2502741 3489/miio_record    
+-unix  3      [ ]         SEQPACKET  CONNECTED     2502735 3489/miio_record    
+-unix  2      [ ]         DGRAM                    2502727 3489/miio_record    
+рекурсивно грепнул всю файловую систему камеры - не нашел, как запускается бинарь
+инфа по процессу:
+cwd: /mnt/data/etc/perp/miio_record
+exe: /mnt/data/bin/miio_record
+(цепочка процессов до pid 1)
+PPid:
+    cat /proc/2046/status | grep PPid
+    PPid:   577
+    577 root     perpd /etc/perp
+        PPid:   573
+        573 root     perpboot -d
+            PPid:   1
+            1 root     /bin/busybox init
+            
+токен можно посмотреть, если выполнить /mnt/data/bin/mortoxd - в выводе он покажет 
+    miio_token:SsnFlkpC68P8qTYW
+    а так же все данные для работы приложения камеры в незашифрованном виде
+    перевести токен в 16-битный формат можно вот такой командой:
+        echo "SsnFlkpC68P8qTYW" | xxd -p
+        53736e466c6b704336385038715459570a
+        ВНИМАНИЕ! последние 2 символа в этом выводе - перенос строки. Их надо отсечь.
+    
+как с помощью консоли получить с камеры любые файлы:
+    открываем ftp сервер busybox-armv7l tcpsvd -vE 0.0.0.0 21 busybox-armv7l ftpd /mnt/data/sound/
+    качаем рекурсивно все от корня wget -r ftp://192.168.0.17/*
+
+звук нормально можно воспроизвести на audacity если экспортировать его в RAW и задать для звука 8bin signed и 16000 Hz
+так же подходит и unsigned. Волна отличается, но на слух - то же самое
+литл эндиан и биг эндиан картины тоже не делают
+поставил 16 signed и 8000Hz - качество стало сильно хуже
+В файле /mnt/data/etc/crontab видно задания для отправки логов на адрес https://dlg.io.mi.com/v1/upload с помощью скрипта /mnt/data/bin/log2mi.sh
+Так же там есть задание для скрипта /mnt/data/bin/log2tf.sh - он каждую минуту дописывает лог на карту памяти, если она вставлена
+в файле /mnt/data/etc/mortoxd.conf задается, насколько я понял, конфигурация хранилищ в памяти - хранилище данных в eeprom и в оперативной памяти. Там есть функции разные, которые вероятно могут как-то помочь синкать изменения памяти и виртуальной файловой системы.
+
+Судя по всему, основным процессом, который получает видео и аудио потоки с устройств камеры явлдяется процесс fetch_av
+К тому же у него в rc скрипте я видел задание самого низкого приоритета для оомкиллера, значит он самый важный.
+
+предполагаю, что собственно камерой является /dev/mstar_ive0
+
+===========
+
+продолжаем разборки. Надо посмотреть, смогу ли я общаться с настроенной камерой по новому токену и протоколу miio
+1. пробую использовать miiocli, ставящуются через пип при установке python-miio модуля. Для управления камерой используется дополнительно установленный https://python-miio.readthedocs.io/en/latest/api/miio.chuangmi_camera.html
+    проверка команды поворота камерф, которая точно работает на ненастроенной камере:
+        miiocli chuangmicamera --ip 192.168.0.21 --token 53736e466c6b704336385038715459570a rotate right
+    повороты работают
+        список команд, которые доступны и которые работают:
+            alarm
+            light_(on/off)
+            rotate
+            info
+            night_mode_(on/off/auto)
+            status
+            watermark_(on/off)
+    окей, управление устройством работает.
+2. пробуем инструкции по настройке стриминга из репозитория https://github.com/miguelangel-nubla/videoP2Proxy#use-it-with-home-assistant
+    там идет сборка бинаря, для сборки надо будет поставить пакеты из мультимедиа репозитория https://deb-multimedia.org/
+    Внимание! избегайте директорий с пробелами в названиях.
+    шаги описаны в репозитории, но сборка фейлится.
+    Выплевывает ошибки вида
+        /usr/bin/ld: av.o:/tmp/v2p/videoP2Proxy/common.h:11: повторное определение «MODE_STDOUT»; main.o:/tmp/v2p/videoP2Proxy/common.h:11: здесь первое определение
+    причина ошибок описана в обсуждении https://www.linux.org.ru/forum/general/16349077
+    для сборки надо добавить в переменные окружения вот это
+        CFLAGS=-fcommon
+    и после уже выполнять autogen и дальнейшие шаги.
+    компилируется вроде после этого нормально
+    запуск:
+        /opt/videop2proxy/bin/videop2proxy --ip 192.168.0.21 --token 53736e466c6b70433638503871545957 --rtsp 8554
+    это не дало ничего, кроме ошибки
+        Can't read output line 1 from command: python3 -c "import miio;result = miio.device.Device('192.168.0.21', '53736e466c6b70433638503871545957').send('get_ipcprop', ['all']);print(result['p2p_id']);print(result['avID']);print(result['avPass']);"
+3. в крайнем случае - можно попробовать подключиться к сокету процесса, получающего видео и посмотреть, что по нему пересылается. Скорее всего там стандартный видеопоток.
+        решил проанализировать состояние сокетов которые держит процесс fetch_av. Оказалось, что к тем сокетам которые он слушает коннектится тоже только он, причем иногда на один сокет несколько коннектов.
+        Другие процессы на сокеты не обращают внимания.
+        Подумал, что неплохо бы найти, есть ли какой-то бинарный файл драйвера в файловой системе и если есть - кто его жержит. Нашел /data/ut/chagall.bin. Гугл показал, что это не файл драйвера, а какая-то бинарная хрень для хардварного кодирования видео. Ни один процесс его не использует.
+            HW encoder fireware. Default located in /config/fw_path/chagall.bin, add fw_path=/new/path/chagall.bin at the end of insmod mi_venc.ko when changing the lacation.
+        Пошел дальше искать по системе, нашел директорию /mstar_ko в которой куча .ko файлов.
+        Пошел гуглить по файлам и нашел что sc3235_MIPI.ko sc3335_MIPI.ko (и возможно srcfg_drv_335.ko) являются модулями ядра для драйвера модульной платы камеры. Находится на алиэкспрессе, например https://aliexpress.ru/item/1005003522181275.html
+        Судя по всему, взаимодействие основного чипа происходит не напрямую с аппаратной частью чипа считывающего картинку, а с каким-то SoC который обслуживает интерфейсно все необходимое.
+        В lsmod вижу только включение вот этих двух модулей drv_ms_cus_sc3335_MIPI drv_ms_cus_srcfg_drv_335 - очевидно это файлы sc3335_MIPI.ko и srcfg_drv_335.ko
+        UPD: вот тут http://www.youcam.pro/new-XM535-SC3335 написано, что sc3335 - это именно матрица.
+        Оказалось, что я немного некорректно понимал вывод lsmod.
+        /bin/busybox-armv7l lsmod | grep 35
+            drv_ms_cus_sc3335_MIPI       6875  0
+            drv_ms_cus_srcfg_drv_335     3680  0
+            mhal                         1360663 10 drv_ms_cus_sc3335_MIPI,mi_venc,mi_vif,mi_sensor,mi_vpe,mi_divp,mi_rgn,mi_ao,mi_ai,mi_sys
+        первая колонка - имя модуля
+        вторая колонка - объем памяти, занимаемый модулем в байтах
+        третья колонка - показывает, сколько экземпляров модуля в данный момент загружено (в это число входят другие модули, которым нужен модуль, а так же обычные процессы, которые используют модуль), значение 0 означает, что модуль выгружен.
+        четвертая колонка - показывает другие модули, которые необходимы для работы текущему модулю
+        (источники инфы - https://access.redhat.com/documentation/ru-ru/red_hat_enterprise_linux/4/html/reference_guide/s2-proc-modules, https://docs.fedoraproject.org/en-US/fedora/latest/system-administrators-guide/kernel-module-driver-configuration/Working_with_Kernel_Modules/)
+        modinfo по этим модулям ничего не показывает
+        кажется, что модули сами находятся в /sys/module, но это не точно. Например modinfo по модулю drv_ms_cus_sc3335_MIPI говорит, что filename модуля аналогичный названию - drv_ms_cus_sc3335_MIPI, но я смог рекурсивным поиском по корню найти аналогичные имена только в /sys/module.
+        Я прошарил директорию и имена модулей в ней, но там не нашел .ko файлов. И указаний на .ko файлы тоже не нашел.
+        Очевидно все-таки модули ядра находятся в /mstar_ko, но каким образом ядру переданы эжти модули - не понятно, а sys/modules - просто сбор ядром инфы о модулях.
+        Предположил, что модули ядра как-то передаются ядру при загрузке, но cat /proc/cmdline показал, что никакие модули там не передаются
+        В dmesg тоже ничего по Command не грепается. В dmesgесть только сообщения типа
+            RtmpUSBNullFrameKickOut - Send NULL Frame @24 Mbps...
+        что наталкивает на плохие мысли потому что там вероятно используется rtmp протокол чреез USB шину, а rtmp проприетарный протокол и сервера/клиенты для него вроде есть только на яве.
+        Есть подозрение, что mhal выступает как IPC шина, но это не точно. У него непустая директория holders, но там ничего интересного - там просто симлинки на модули, которые его держат.
+        надо бы посмотреть, что за скрипты /mnt/data/bin/pre-ota.sh и /mnt/data/bin/post-ota.sh
+        pre-ota.sh:
+            останавливает какие-то процессы, поторые файлами присутствуют в /etc/perp/, но кроме исключений
+            miio_ota mortox miio_client miio_agent miio_devicekit miio_client_helper
+            perpctl d ${file} - видимо замена systemctl, останавливает демон
+            perpctl k ${file} - видимо убивает процессы сигкиллом, если не получилось терминировать по мирному
+            удаляет модули из ядра через rmmod, отключает sd карту и тоже удаляет модули для файловых систем fat
+            после этого дропает какие-то кэши и перемонтирует /mnt/data в ro
+            через dd переносит срожержимое /mnt/data/.config.nvram в /dev/mtdblock4
+        post-ota.sh:
+            ребут устройства
+        есть абстрактный план:
+            в /etc/perp/ лежат директории с rc файлами для сервисов которые запускаются при старте системы. Среди них есть miio_record, который пишет видео на карту.
+            То есть этот процесс точно куда-то подключается и успешно сохраняет видео. Надо бы найти, куда он ломится и как именно.
+        lsof | grep miio_record показывает следующую картину:
+            583     /usr/sbin/perpd /mnt/data/etc/perp/miio_record
+            638     /mnt/data/bin/miio_record       /dev/null
+            638     /mnt/data/bin/miio_record       pipe:[723]
+            638     /mnt/data/bin/miio_record       pipe:[723]
+            638     /mnt/data/bin/miio_record       socket:[1247]
+            638     /mnt/data/bin/miio_record       socket:[1248]
+            638     /mnt/data/bin/miio_record       socket:[2780]
+            638     /mnt/data/bin/miio_record       socket:[2783]
+            638     /mnt/data/bin/miio_record       socket:[2786]
+            638     /mnt/data/bin/miio_record       socket:[2790]
+            638     /mnt/data/bin/miio_record       anon_inode:[eventpoll]
+            638     /mnt/data/bin/miio_record       anon_inode:[eventfd]
+            638     /mnt/data/bin/miio_record       /dev/urandom
+            638     /mnt/data/bin/miio_record       /mnt/sdcard/MIJIA_RECORD_VIDEO/tmp.mp4
+        посмотрел в /etc/perp/miio_record/rc.main - внутри только запуск /etc/perp/.common/rc.main с передачей ему в аргументе miio_record
+        сам .common/rc.main - просто скрипт обертка для контроля состояния запущенного демона - контролируется период рестартов, если демон палдает, ведутся логи и статистика падений, перезапуск. Более ничего.
+        содержимое /proc/638/cmdline:
+            miio_record
+        содержимое /proc/638/environ:
+            USER=root
+            SHLVL=5
+            LD_LIBRARY_PATH=/mnt/data/lib
+            HOME=/
+            OLDPWD=/
+            PERP_SVPID=638
+            TERM=vt102
+            PERP_BASE=/etc/perp
+            PATH=/mnt/data/bin:/bin:/sbin:/usr/bin:/usr/sbin
+            SHELL=/bin/sh
+            PWD=/mnt/data/etc/perp/miio_record
+            ISP_CFG_PATH=/data/cfg
+        в /data/cfg есть только файл public-key.pem, который был прописакн туда видимо при прошивке устройства в 2020 году и больше не менялся
+        а в /mnt/data/lib/ лежат либы для всего этого хозяйства, в том числе с интересными названиями например libcam_os_wrapper.so, libmiio_mp4_synthetic.so.0.0.0 и libmp4v2.so.2.0.0
+        вытащил из камеры miio_record в мою raspberry pi и посмотрел вывод ldd:
+            linux-vdso.so.1 (0x7e9f3000)
+            /usr/lib/arm-linux-gnueabihf/libarmmem-${PLATFORM}.so => /usr/lib/arm-linux-gnueabihf/libarmmem-v7l.so (0x76f08000)
+            libmp4v2.so.2 => not found
+            libmortox.so.0 => not found
+            libmortox_share.so.0 => not found
+            libshbfev.so.0.2 => not found
+            libev.so.4 => not found
+            libshbf.so.0.2 => not found
+            libjson-c.so.3 => /lib/arm-linux-gnueabihf/libjson-c.so.3 (0x76eef000)
+            libmiio_util.so.0 => not found
+            libmortoxev.so.0 => not found
+            librlf.so => not found
+            libmiio_mp4_synthetic.so.0 => not found
+            libmiio_statistics.so.0 => not found
+            libc.so.0 => not found
+            libc.so.6 => /lib/arm-linux-gnueabihf/libc.so.6 (0x76da1000)
+            /lib/ld-uClibc.so.0 => /lib/ld-linux-armhf.so.3 (0x76f1d000)
+        попробовал снять бамп объектов, чтобы просто посмотреть, что покажет objdump -D - на pi выполнилось успешно, но совершенно ничего содержательного не показало.
+        Продолжил ковырять пайп - наткнулся на https://stackoverflow.com/questions/69325220/can-single-pipe-be-connected-and-read-by-multiple-processes, TL;DR - много продюсеров + один консюмер - возможно, много консюмеров, один продюсер - не возможно.
+        Посмотрел так же, кто еще держит этот пайп - обратилд внимание на /usr/sbin/sissylog
+        Гугл показал, что он является частью perp - https://www.freshports.org/sysutils/perp/ (в списке файлов там есть), видимо это какой-то аналог сислога для собственно, аггрегации логов.
+        В таком случае предполагаю, что пайп который держат много приложений на самом деле является шиной, куда все приложения пишут свои логи, а читает оттуда только sissylog.
+        С чтением из сокета тоже возникли проблемы, как написал комментатор из https://stackoverflow.com/questions/69325220/can-single-pipe-be-connected-and-read-by-multiple-processes :
+            Unix fifos (pipes) can not be used in "single producer, multiple consumer" (spmc) manner; this also holds for Unix Domain Sockets (for most implementations UDS and fifos are implemented by the very same code, with just a few configuration bits differing on creation)
+        То есть: кажется я не смогу вклиниться в передачу данных по юникс сокету.
+4. возможно стоит попробовать подменить временный файл который держит miio_record на именной пайп и из него читать.
+    поставил watch -n 1 ls -lt /mnt/sdcard/MIJIA_RECORD_VIDEO/tmp.mp4 посмотреть, до какого развера ротируется файл:
+        5 ротаций: 4996099, 5019087, 5025135, 5061740, 5047351
+        примерно 5 мегабайт - потолок. Но до 5242880 байт не доходит даже с погрешностью в 120621 байт (примерно сколько набегает за полсекунды)
+    попробовал удалить /mnt/sdcard/MIJIA_RECORD_VIDEO/tmp.mp4 и убить miio_record.
+        miio_record был сразу же поднят perp-ом и файл tmp.mp4 был пересоздан.
+        Так же стоит отметить, что сменились все айди сокетов, но не сменился айди пайпа.
+    попробовал создать просто в /tmp/sdcard пайп-файл - не получилось с ошибкой permission denied.
+    Посмотрел вывод mount - увидел, что карта монтируется с дополнительными флагами dirsync,nosuid,nodev,noatime,nodiratime. Подумал, что нужно проверить, сохранится ли ошибка без них.
+    Прочитал в гугле, что такая ошибка может быть из-за того, что файловая система не поддерживает пайпы. Беглый гугл не помог найти, какие FS поддерживают пайпы, а какие нет.
+    За монтирование карты автоматически отвечает /mnt/data/bin/miio_sdcard
+    снял x флаг с файлов /mnt/data/bin/miio_sdcard и /mnt/data/bin/miio_record и убил процессы.
+    карта не отмонтируется, говорит, что устройство занято, при том, что lsof не показывает чтобы кто-то на ней держал файлы (UPD: оказалось, что lsof почему-то не показывает, что я нахожусь сессией терминала в директории карты).
+    выдернул карту физически, вставил назад - не смонтировалась.
+    Смонтировал руками (при этом словил странный баг (?) - mount | grep sdcard показывал старое монтирование одновременно с новым)
+    Ничего не изменилось - пайп не создается с той же ошибкой.
+    Предположил, что дело в файловой системе. Через pi попробовал отформатировать в ext2 и подключить в камере.
+    Как оказалось, ядро камеры не знает о существовании ext файловых систем.
+        # cat /proc/filesystems
+            nodev   sysfs
+            nodev   rootfs
+            nodev   ramfs
+            nodev   bdev
+            nodev   proc
+            nodev   cgroup
+            nodev   cgroup2
+            nodev   tmpfs
+            nodev   devtmpfs
+            nodev   configfs
+            nodev   debugfs
+            nodev   sockfs
+            nodev   pipefs
+            nodev   devpts
+                    squashfs
+            nodev   jffs2
+            nodev   mqueue
+            nodev   cifs
+            nodev   rpc_pipefs
+            nodev   nfs
+                    vfat
+    Отформатировал карту назад как было в vfat.
+    Попробовал создать пайп через pi - так же не получилось с permission denied. Очевидно дело именно в файловой системе.
+    Варианта решения два - или компилировать 32-битный модуль для ext, или посмотреть, могут ли какие-то еще файловые системы, доступные ядру камеры мне помочь.
+    Вот список fs которых нет у меня на слаквари, но которые есть в камере:
+            nodev   rootfs
+                    squashfs
+            nodev   jffs2
+            nodev   cifs
+                    vfat
+    jffs2 - единственная fs, смонтированная в rw, в ней успешно создается пайп. минус в том, что блочное устройство невозможно без лютых костылей юзать как jffs2. Костыли эти к камере применить будет невероятно сложно.
+    Можжно попробовать поменять путь, куда пишет бинарь miio_record. Открыл его хекс эдитором - вижу путь захардкоженный строкой.
+    Нужно попробовать поменять на /mnt/data/<что угодно>, подменить на камере и запустить.
+    Минус в том, что tmp.mp4 файлы конкатенируются в файлы большего объема, а путь до этих файлов скорее всего получается из пути временного файла. И jffs2 просто не сможет в себя эти файлы принять.
+    Надо так же проверять, как она работает. ФС хоть и смонтирована в rw, не очень понятно, пишет ли она на самом деле во флеш память изменения. UPD: проверил - после ребута действительно изменения в фс сохраняются.
+    Подсунул камере отредактированный бинарь. Поток действительно начал писаться в файловую систему. Поменял путь записи временного файла на /tmp/longnamedrepofolder/tempvideo.mp4, чтобы по длинне в бинарном  виде он был такой же и писал в tmpfs сразу в память.
+    При этом замечена интересная особенность. Оказалось, что tmp файл не конкатенируется с каким-то другим файлом большого размера, а маленькие кусочки по 5 мб просто хранятся согласно таймштампам на флешке. Это видно по ошибке, которую стал сыпать бинарь
+        rename /tmp/longnamedrepofolder/tempvideo.mp4 file to /mnt/sdcard/MIJIA_RECORD_VIDEO/2023062311/11M33S_1687507893.mp4 error:Resource temporarily unavailable
+    оказалось, что он не выполняет mv, он просто делает переименование.
+    далее, проверил, как ресетается файл - по времени или по размеру файла. Проверил двумя ротациями со статичным видео и двумя записями с постоянно меняющимся видео
+        1687508431
+        1687508491
+        2.4мб
+
+        1687508492
+        1687508550
+        2,5мб
+
+        1687508551
+        1687508611
+        5мб
+
+        1687508612
+        1687508671
+        6,4мб
+    у всех запись длится всего 60 секунд. Значит ротирует просто по времени. Значит можно попробовать найти значение в секундах или миллисекундах в бинарном файле.
+    Тесты показали, что бинарь просто удаляет и пересоздает файл заново, если на его месте что-то уже существует. Соответственно, удаляет и уже ранее созданный пайп. Подумал, что chattr +i мог бы защитить пайп, но это тоже не помогло.
+5. подменить файл кажется не очень удобно, но можно попробовать просто следить за временным файлом через inotify и все что в него пишется отправлять самописным приложением куда-то себе на сторону.
+    написал на го простую программу, юзающую модуль https://github.com/fsnotify/fsnotify, которая создает inoityfy и следит за всем, что происходит в /tmp/.
+    проверил на pi - все действия ловит - при удалении видно, что происходит REMOVE, при создании - собственно создание, модификация тоже видна соответствующе.
+    Перекинул на камеру и посмотрел, как miio_record работает с временным файлом. Оказалось, что она использует только операцию write. Она не пересоздает файл, а видимо просто записывает его заново с пустым (или каким-то заголовочным заранее готовым) содержимым.
+    Это проблема, потому что я надеялся отслеживать ротацию временного файла через inotify удаления файла, но такого действия miio_record просто не делает.
+    Так же есть еще одна проблема - кажется по простому конкатенировать два mp4 файла нельзя. Существует специальный формат, который позводляет простую конкатенацю - ts, но mp4 надо разжимать из контейнера. А это вызывает вопросы - как объединять в один реалтаймовый поток то, что делится на файлы длинной по минуте.
+6. решил побольше порисерчить и откатиться немного назад.
+    решил поубивать процессы, запущенные perf и посмотреть, что будет.
+    + miio_agent - При убийстве невозможно подключиться с телефона к потоку. Коннектится к miio_client.
+    + miio_devicekit - второй экземпляр пытается коннектитиься к 127.0.0.1:54320, инициализирует пины GPIO, видимо для управления моторчиками. убийство процесса приводит к невозможности вращать камерой, видеопоток остается.
+    + miio_client - второй экземпляр пытается послушать порт 54322 и у него не выходит, из-за чего программа падает. Убийство процесса явных следов не оставляет. Так же предположительно, слушает 54320 порт.
+    + miio_algo - второй экземпляр запускается без каких-либо проблем. Судя по логам, предполагаю, что она нужна для всякой автоматики, над управлением камерой. Например детект того, что картинка стала слишком темной и надо включить инфракрасное видение. Убийство процесса выявляет видимую проблему - при старте miio_record он возвращает ошибку
+        [  info] md_event_stream receiver closed!
+    всего таких ресиверов miio_record открывает, исходя из логов, 4:
+        video_record_stream receiver
+        audio_record receiver
+        md_event_stream receiver
+        snapshot_stream receiver
+    + miio_sdcard - назначение уже известно - мониторит и управляет монтированием карты.
+    + miio_miss - второй экземпляр пытается коннектиться к miio_client а потом сразу в логах к 127.0.0.1:54320. Так же второй экземпляр логирует события управления моторами камеры. Так же в логах проскакивает упоминание какого-то tutk. Это какое-то решение для IoT камер, гуглится, но что конкретно это за приложение - не ясно.
+    + miio_nas - отключил, так как это очевидно управление настройками для подключения разных удаленных хранилищ. В примере этой камеры - nfs. Выключение ни на что вроде не повлияло.
+    + miio_ota - судя по названию, это служба для over-the-air обновлений. Выключаем так как не нужно.
+    + mortox - демон, который работает с какими-то значениями пер6еменных, хранящимися в nvram. В том числе он контролирует состояние переменной is_sdcard_ok. Если его перезапустить - переменные не будут иметь прежнихъ значений и miio_record например не будет писать временный файл, потому что увидит, чтиор sd карта не в порядке.
+    + fetch_av - демон, который видимо получает с SoC камеры видео и аудио. Второй экземпляр роняет систему в ребут. Убийство процесса систему не блокирует. При убийстве и попытке запуска miio_record видно она выдает в логах
+        [  info] snapshot_stream receiver closed!
+        [  info] video_record_stream receiver closed!
+        [  info] audio_record receiver closed!
+    во время разборок с fetch_av нагуглил ишью в репе https://github.com/telmomarques/xiaomi-360-1080p-hacks/issues/2
+    и там говорится, что
+        The /mnt/data/bin/fetch_av binary seems to do all the heavy lifting getting a stream from the sensor, so that other binaries can stream (miio_stream), record (miio_record), etc. This seems to happen through DMA.
+    а DMA - это собственно direct memory access. Почитал https://habr.com/ru/articles/37455/ описание работы.
+    сразу обратил внимание, что эту репу я уже видел, но почему-то прошел мимо. Пригляделся.
+    Оказывается в README написано с большим количеством что поддеривается только модель камеры MJSXJ02CM, а у меня MJSXJ09CM. И не описан принцип работы хака. Из-за чего я его успешно прошел мимо. Попробую пройти те же шаги, которые делал telmomarques.
+    сразу же проблема при попытке повторить первый шаг.
+        # pidof fetch_av_tmp
+        3777
+        # cat /proc/3777/maps | grep mem
+        #
+    fetch_av в моей камере не имеет открытых /dev/mem, в отличие от камеры telmomarques
+7. приглядеться, что происходит в /run, потому что этот путь telmomarques тоже описывал как потенциально возможный.
+    Поискал упоминание video_record_stream в hex редакторе miio_record. Нашел совпадение только в одном месте и оно подозрительно близко стоит к /run/video_mainstream:
+        /run/video_mainstream...video_record_stream./run/audio_in...audio_record..../run/md_event...md_event_stream./run/jpeg_snap..snapshot_stream
+    ранее написанной программой на го повесил inotyfy на /run/video_mainstream/. На первый взгляд видно кучу записей REMOVED, что интересно, без CREATE. В среднем вывод выглядит вот так:
+        2023/06/26 16:29:16 event: "/run/video_mainstream/1217e": REMOVE
+        2023/06/26 16:29:16 event: "/run/video_mainstream/1217f": REMOVE
+        2023/06/26 16:29:16 event: "/run/video_mainstream/12180": REMOVE
+        2023/06/26 16:29:16 event: "/run/video_mainstream/12181": REMOVE
+        2023/06/26 16:29:16 event: "/run/video_mainstream/12182": REMOVE
+        2023/06/26 16:29:16 event: "/run/video_mainstream/12183": REMOVE
+        2023/06/26 16:29:16 event: "/run/video_mainstream/12184": REMOVE
+        2023/06/26 16:29:16 event: "/run/video_mainstream/12185": REMOVE
+        2023/06/26 16:29:16 event: "/run/video_mainstream/12186": REMOVE
+    файлы с hex именами просто по инкрементальному порядку каким-то образом там создаются и удаляются. Не очень понятно, почему не видно их создания. Баг это в го модуле или какой-то другой механизм создает файлы, который айнотифи не видит.
+    перенаправил вывод программы в файл и собрал статистику примерно за 2 минуты:
+        старт:      2023/06/26 16:27:03
+        остановка:  2023/06/26 16:29:16
+        всего строк от inotify:     3834
+        строк с REMOVE:             3761
+        строк с CREATE:             73
+        других строк нет.
+        распределение CREATE неравномерное по времени - может быть два CREATE в одну секунду
+            2023/06/26 16:28:41 event: "/run/video_mainstream/11d9f": CREATE
+            2023/06/26 16:28:41 event: "/run/video_mainstream/11da1": CREATE
+            (11da1 - 11d9f = 2)
+        а может быть и с паузой в 6 секунд
+            2023/06/26 16:28:25 event: "/run/video_mainstream/11bd4": CREATE
+            2023/06/26 16:28:31 event: "/run/video_mainstream/11c7b": CREATE
+            (11c7b - 11bd4 = a7)
+        все-таки я думаю, что это какая-то проблема в модуле го, который в приоритете выдает мне REMOVE, а на самом деле CREATE там столько же.
+    посмотрел, сколько REMOVE происходит в секунду и подтвердил свои подозрения
+        # cat /tmp/testframes | grep "16:27:30" | grep REMOVE | wc -l
+        29
+        # cat /tmp/testframes | grep "16:27:31" | grep REMOVE | wc -l
+        28
+        # cat /tmp/testframes | grep "16:27:32" | grep REMOVE | wc -l
+        28
+        # cat /tmp/testframes | grep "16:27:33" | grep REMOVE | wc -l
+        29
+        # cat /tmp/testframes | grep "16:27:34" | grep REMOVE | wc -l
+        27
+        # cat /tmp/testframes | grep "16:27:35" | grep REMOVE | wc -l
+        29
+        # cat /tmp/testframes | grep "16:28:35" | grep REMOVE | wc -l
+        28
+    скорее всего это чистые кадры, которые идут прямо с устройства.
+    собрал простой бинарь наго который пытается подключиться к SOCKSTREAM юникс сокету, прочто для проверки коненкта.
+    При запуске бинаря
+        # ./main
+        -sh: ./main: not found
+    Выкачал статически собранный 32битный strace из интернетов (https://github.com/andrew-d/static-binaries/blob/master/binaries/linux/arm/strace)
+        # ./strace ./main
+        execve("./main", ["./main"], [/* 18 vars */]) = -1 ENOENT (No such file or directory)
+        writev(2, [{"./strace: exec: No such file or "..., 41}, {"\n", 1}], 2./strace: exec: No such file or directory
+        ) = 42
+        writev(2, [{"", 0}, {NULL, 0}], 2)      = 0
+        getpid()                                = 1277
+        exit_group(1)                           = ?
+        +++ exited with 1 +++
+    оказалось, что бинарь был не полностью статически собран.
+        # ldd main
+        not a dynamic executable
+        # file main
+        main: ELF 32-bit LSB executable, ARM, EABI5 version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-armhf.so.3, Go BuildID=teYdHZjZd9LBHjk7n91k/PawcvOOZ8-J90b-pGOSl/-XKS7lD1yyyDLEQqOPyi/72ZSfmSsw9msWO5J9OeQ, with debug_info, not stripped
+    ldd показывает, что он статический, но в то же время file говорит "dynamically linked"
+    в такой ситуации readelf показывает, что есть динамически слинкованные библиотеки.
+    Оказывается го собирает обычно статические бинари, но есть исключения - сишные либы, которые могут юзаться модулями го.
+    вот такая команда сборки соберет полностью статичный бинарь, даже если используется глибец:
+        go build -ldflags "-linkmode 'external' -extldflags '-'"
+        UPD: при компиляции с либой net эти параметры привели к ошибке, можно попробовать вместо них -ldflags "-linkmode external -extldflags -static"
+    в итоге бинарь на камере запустился. Пока он умеет только коннектиться к сокету и отключаться от него.
+    что пишет fetch_av когда запускается мой бинарь:
+        2023-06-26 21:56:42.846 [  info] broadcaster 0 get new receiver: 33, total count 1
+        2023-06-26 21:56:42.850 [  warn] broadcaster 0 receiver 33 closed, total count 0
+    что пишет fetch_av когда запускается miio_record:
+        при старте:
+        2023-06-26 22:02:37.626 [  info] broadcaster 0 get new receiver: 33, total count 1
+        2023-06-26 22:02:37.632 [  info] broadcaster 4 get new receiver: 34, total count 1
+        2023-06-26 22:02:37.634 [  info] broadcaster 3 get new receiver: 35, total count 1
+        2023-06-26 22:02:37.847 [ debug] get jpeg size = 44730
+        2023-06-26 22:02:37.858 [ debug] Got jpeg {2, 0, 44730, 77309427712},time cost 11.310000
+        при выходе:
+        2023-06-26 22:02:40.043 [  info] broadcaster 0 get new receiver: 36, total count 2
+        2023-06-26 22:02:40.043 [  warn] broadcaster 0 receiver 33 closed, total count 1
+        2023-06-26 22:02:40.049 [  info] broadcaster 4 get new receiver: 33, total count 2
+        2023-06-26 22:02:40.050 [  warn] broadcaster 4 receiver 34 closed, total count 1
+        2023-06-26 22:02:40.053 [  info] broadcaster 3 get new receiver: 34, total count 2
+        2023-06-26 22:02:40.054 [  warn] broadcaster 3 receiver 35 closed, total count 1
+        2023-06-26 22:02:40.070 [  warn] broadcaster 3 receiver 34 closed, total count 0
+        2023-06-26 22:02:40.071 [   err] receiver error: 33: Connection reset by peer
+        2023-06-26 22:02:40.072 [  warn] broadcaster 4 receiver 33 closed, total count 0
+        2023-06-26 22:02:40.074 [  warn] broadcaster 0 receiver 36 closed, total count 0
+    попробовал прочитать из сокета и запринтить что-нибудь с буфером 1024 байт - ничего в выводе не получил.
+    попробовал увеличить буфер до 102400 байт - ничего не изменилось.
+    Попробовал посмотреть strace miio_record - примерно на 846 строке видно коннект к сокету
+    ./strace -e trace=connect,recvmsg /mnt/data/bin/miio_record_tempfile_path_edited_2_in_tmp
+        connect(6, {sa_family=AF_LOCAL, sun_path="/run/video_mainstream/control"}, 31) = 0
+        recvmsg(6, {msg_name(0)=NULL, msg_iov(2)=[{"\1\0\0\0", 4}, {"!\0\0\0\2\0\0\0\25\0\0\0/run/video_mainstrea"..., 65536}], msg_controllen=0, msg_flags=0}, MSG_NOSIGNAL) = 41
+        а потом в бесконечном повторе:
+        recvmsg(6, {msg_name(0)=NULL, msg_iov(2)=[{"\2\0\0\0", 4}, {"\10\0\0\0\0\20\0\0", 65536}], msg_controllen=16, [{cmsg_len=16, cmsg_level=SOL_SOCKET, cmsg_type=SCM_RIGHTS, [14]}], msg_flags=0}, MSG_NOSIGNAL) = 12
+    сравнил с тем же участком при strace моего бинаря:
+        connect(3, {sa_family=AF_LOCAL, sun_path="/run/video_mainstream/control"}, 32) = 0
+        read(3, "\1\0\0\0!\0\0\0\2\0\0\0\25\0\0\0/run/video_mains"..., 102400) = 41
+    В общем, кажется, read сискол ему не подходит, а нужен именно recvmsg
+    Нагуглить подходящий модуль для го я смог:  golang.org/x/net/internal/socket
+    В нем есть врапер для вызова recvmsg сискола.
+    Но у меня вместо IDE кал говна, поэтому у меня возникли проблемы с автокомплитом модуля.
+    По идее, все то нужно:
+        GOPATH=/home/reg/gopath GOROOT=/home/reg/go /home/reg/go/bin/go mod init main
+        GOPATH=/home/reg/gopath GOROOT=/home/reg/go /home/reg/go/bin/go mod tidy
+    так же у меня возникала ошибка module golang.org/x/net@latest found (v0.11.0), but do es not contain package golang.org/x/net
+        лечилась полной очисткой gopath и кеша. Ну, чем-то из этого точно.
+        GOPATH=/home/reg/gopath GOROOT=/home/reg/go /home/reg/go/bin/go clean -modcache
+    Но так как я работаю в liteide - он тупит и никакой автокомплит не работает, даже при том, что я в liteide уже заменил gocode на самый последний
+    Ничто из https://stackoverflow.com/questions/19876902/liteide-no-autocomplete мне не помогло.
+    Нашел ишью для gocode:
+        https://github.com/visualfc/liteide/issues/952
+        там lrita посоветовал запустить руками gocode перед запуском liteide. И это действительно починило автокомплит.
+        Запускал так:
+        /home/reg/gopath/bin/gocode -s -sock unix -addr 127.0.0.1:37372
+    Далее возникла проблема при попытке использовать import "golang.org/x/net/internal/socket"
+    Была ошибка "Use of internal package not allowed", которая ясно дала мне понять, что использовать напрямую эти куски модуля я не могу. Не знал этого раньше.
+    Я попробовал поискать, а где же используются эти внутренние враперы для сисколов, но не нашел ничего. Такое ощещение, что в internal они прописаны, но реально нигде не юзаются.
+    Зато я обратил внимание, пока грепал, что есть способ из го вызвать напрямую сисколл.
+    Возможно стоит пойти этим путем, потому что петля получения даных с сокета судя по strace miio_record не выглядит сложной.
+8. попытаться читать из сокета через повторение аналогичных сисколов, что и в miio_record
+    стоит отметить особенность, которую я раньше не знал. Оказывается сначала процесс создает файловый дескриптор, а только потом указывает, с каким файлом этот дескриптор работает, а не получает дескриптор при попытке открыть файл.
+    последовательность оригинала:
+        socket(PF_LOCAL, SOCK_SEQPACKET|SOCK_CLOEXEC|SOCK_NONBLOCK, 0) = 6
+        connect(6, {sa_family=AF_LOCAL, sun_path="/run/video_mainstream/control"}, 31) = 0
+        recvmsg(6, {msg_name(0)=NULL, msg_iov(2)=[{"\1\0\0\0", 4}, {"!\0\0\0\2\0\0\0\25\0\0\0/run/video_mainstream\10\30\0\0", 65536}], msg_controllen=0, msg_flags=0}, MSG_NOSIGNAL) = 41
+        recvmsg(6, {msg_name(0)=NULL, msg_iov(2)=[{"\2\0\0\0", 4}, {"\1\0\0\0\0\20\0\0", 65536}], msg_controllen=16, [{cmsg_len=16, cmsg_level=SOL_SOCKET, cmsg_type=SCM_RIGHTS, [13]}], msg_flags=0}, MSG_NOSIGNAL) = 12
+        recvmsg(6, {msg_name(0)=NULL, msg_iov(2)=[{"\2\0\0\0", 4}, {"\2\0\0\0\0\20\0\0", 65536}], msg_controllen=16, [{cmsg_len=16, cmsg_level=SOL_SOCKET, cmsg_type=SCM_RIGHTS, [13]}], msg_flags=0}, MSG_NOSIGNAL) = 12
+        а потом в бесконечном повторе:
+        recvmsg(6, {msg_name(0)=NULL, msg_iov(2)=[{"\2\0\0\0", 4}, {"\10\0\0\0\0\20\0\0", 65536}], msg_controllen=16, [{cmsg_len=16, cmsg_level=SOL_SOCKET, cmsg_type=SCM_RIGHTS, [14]}], msg_flags=0}, MSG_NOSIGNAL) = 12
+    Разберем по частям:
+    ./strace -s 256 -e trace=connect,recvmsg,socket,open,close /mnt/data/bin/miio_record_tempfile_path_edited_2_in_tmp
+        socket(PF_LOCAL, SOCK_SEQPACKET|SOCK_CLOEXEC|SOCK_NONBLOCK, 0) = 6
+            на самом деле сисколл принимает в себя только инты. То что мы видим в strace - интерпретация интовых значений. Не смог найти инт для PF_LOCAL, думал уже, что нужно будет разбирать более детально strace, но внезапно наткнулся на https://www.unix.com/man-page/linux/7/PF_LOCAL/, в которой вроде подразумевается, что pf_local, af_local и af_unix  - это синонимы. Короче заюзал syscall.AF_LOCAL - такая константа есть.
+            Как превратить SOCK_SEQPACKET|SOCK_CLOEXEC|SOCK_NONBLOCK в один инт тоже не понятно. Это все три разных константы в модуле.
+            ман по strace показывает, что есть ключ -v который мне отключит трансляцию параметров в текстовые значения, но, как оказалось (https://stackoverflow.com/questions/34365928/show-complete-arguments-in-strace-even-in-curly-brackets/34373478#34373478) это не работает для массивов и вложенных значений аргументов. Можно отключить полностью, но только через патч и пересборку strace.
+            Внезапно мне пришло в голову, что можно попробовать просто перечислить точно так же три константы через | и оно действительно собралось и заработало.
+            Посмотрел, что видно в strace на respberry:
+                socket(AF_UNIX, SOCK_SEQPACKET|SOCK_CLOEXEC|SOCK_NONBLOCK, 0) = 3
+            и тот жне бинарь, но через strace который на камере:
+                socket(PF_LOCAL, SOCK_SEQPACKET|SOCK_CLOEXEC|SOCK_NONBLOCK, 0) = 3
+            действительно, видимо просто по разному разные strace раскрывают инты в аббревиатуры.
+        connect(6, {sa_family=AF_LOCAL, sun_path="/run/video_mainstream/control"}, 31) = 0
+            проблемы и непонятки возникли только в том, что syscall.Connect требует в себя syscall.Sockaddr, который является интерфейсом и было непонятно, как его объявить.
+            Нашел пример кода, оказывается обращаться с ним нужно вот так:
+                bindsocket := syscall.SockaddrUnix{Name: "/run/video_mainstream/control"}
+                err = syscall.Connect(sockFd, &bindsocket)
+            так же случайно наткнулся на https://pkg.go.dev/net#UnixConn.ReadMsgUnix, который подозрительно похож на https://pkg.go.dev/syscall#Recvmsg по структуре. Видимо все-таки проглядел я ранее в стандартном модуле работу с сисколом recvmsg. Если не получится сисколами - попробую через net.
+        recvmsg(6, {msg_name(0)=NULL, msg_iov(2)=[{"\1\0\0\0", 4}, {"!\0\0\0\2\0\0\0\25\0\0\0/run/video_mainstream\10\30\0\0", 65536}], msg_controllen=0, msg_flags=0}, MSG_NOSIGNAL) = 41
+            в голенге - func Recvmsg( fd int,             p []byte, oob []byte,                                                                                                                                     flags int)
+            в стрейс -  recvmsg(      6,             {msg_name(0)=NULL, msg_iov(2)=[{"\1\0\0\0", 4}, {"!\0\0\0\2\0\0\0\25\0\0\0/run/video_mainstream\10\30\0\0", 65536}], msg_controllen=0, msg_flags=0},    MSG_NOSIGNAL) = 41
+            в мане -    recvmsg(      int sockfd,    struct msghdr *msg,                                                                                                                                     int flags);
+            не соответствует число аргементов в голенге и мане. Надо бы понять, что такое p и oob []byte.
+                recvmsgRaw(fd, p []byte, oob []byte, flags, &rsa)
+            в pkg/mod/golang.org/x/sys@v0.9.0/unix/syscall_linux.go находится функция:
+                    recvmsgRaw(fd int, iov []Iovec, oob []byte, flags int, rsa *RawSockaddrAny) (n, oobn int, recvflags int, err error)
+                судя по сорцам - p - это struct iovec, которая описана в man recvmsg 2
+
+           struct iovec {                    /* Scatter/gather array items */
+               void  *iov_base;              /* Starting address */
+               size_t iov_len;               /* Number of bytes to transfer */
+           };
+
+           struct msghdr {
+               void         *msg_name;       /* Optional address */             NULL                                                                                        NULL
+               socklen_t     msg_namelen;    /* Size of address */              (0)                                                                                         (0)
+               struct iovec *msg_iov;        /* Scatter/gather array */         [{"\1\0\0\0", 4}, {"!\0\0\0\2\0\0\0\25\0\0\0/run/video_mainstream\10\30\0\0", 65536}]       [{"\2\0\0\0", 4}, {"\1\0\0\0\0\20\0\0", 65536}]
+               size_t        msg_iovlen;     /* # elements in msg_iov */        (2)                                                                                         (2)
+               void         *msg_control;    /* Ancillary data, see below */                                                                                                [{cmsg_len=16, cmsg_level=SOL_SOCKET, cmsg_type=SCM_RIGHTS, [13]}]
+               size_t        msg_controllen; /* Ancillary data buffer len */    0                                                                                           16
+               int           msg_flags;      /* Flags on received message */    0                                                                                           0
+           };
+        внезапно со странной ошибкой на ровном месте начал падать fetch_av.
+            2023-06-29 03:11:05.117 [   err] chn=1,get venc stream buf is not enough 261120 < 367769 ,stStat.u32CurPacks=1
+            [MI WRN ]: MI_AO_DisableAdec[5732]: Dev0 Chn0 Aenc Attr is not set
+            2023-06-29 03:11:05.289 [   err] Mstar_AO_exit error,ret=0xa0052009
+            [MI WRN ]: MI_AI_DisableAenc[9798]: Dev0 Chn0 Aenc Attr is not set
+            [MI ERR ]: MI_AI_GetAedResult[10574]: Dev0 Chn0 Aed attr is not set!!!
+            [MI ERR ]: MI_AI_GetAedResult[10567]: Dev0 Chn0 has not been enabled.
+            2023-06-29 03:11:05.505 [   err] Audio release frame data error
+            2023-06-29 03:11:05.616 [   err] Mstar_AI_exit error,ret=0xa0042009
+            2023-06-29 03:11:05.617 [   err] Audio Get Frame Data error
+            [SED ERR]:MI_SED_DestroyChn[2111]: MI_IVE_Destroy success
+            Выключил камеру минут на 5 и включил снова - не помогло, fetch_av продолжает падать.
+            Описание venc:
+                https://wx.comake.online/doc/d8clf27cnes2-SSD20X/customer/development/mi/en/mi_venc.html
+            Выключил камеру и ушел спать. Проснулся, включил камеру - все работает нормально как и раньше. Камера поток не прерывает, fetch_av не падает.
+            Сохранил логи загрузки fetch_av где он падает и где не падает в директории лог_загрузки_fetch_av
+
+        вернулся к сисколам:
+        посмотрел сорцы функции recvmsgRaw - судя по всему, ей не нужно передавать отдельно по структуре все параметры с len, потому что она сама их вычисляет
+        Так же совершено непонятно, как передавать несколько элементов в слайсе для одного артумента, потмоу что функция ждет от меня только []byte, но не массив из них.
+        Попробовал вызвать его тестово:
+            строка в го: syscall.Recvmsg(sockFd, []byte{1, 2, 3, 4}, []byte{5, 6, 7, 8, 9}, syscall.MSG_NOSIGNAL)
+            строка в strace: recvmsg(3, {msg_name(32)={sa_family=AF_LOCAL, sun_path="/run/video_mainstream/control"}, msg_iov(1)=[{"\1\0\0\0", 4}], msg_controllen=0, msg_flags=MSG_TRUNC}, MSG_NOSIGNAL) = 4
+            сразу примечательно, что заполняется автоматически msg_name, при том, что в оригинале оно пустое. Имя не поддается правке и вычисляется автоматически из параметров сокета.
+            так же откуда-то взялся MSG_TRUNC во флагах msg_iov. По документации он равен 0x20. Откуда взялось это значение - не понятно, сорцы ответа не дали.
+            так же почему-то значение в сообщении показано "\1\0\0\0", а я думал, что будет показано []byte{1, 2, 3, 4}, в переводе - "\1\2\3\4".
+            так же был проигнорирован и не включен в сисколл второй байтовый массив []byte{5, 6, 7, 8, 9}
+        вторая попытка:
+            строка в го: syscall.Recvmsg(sockFd, []byte{1, 2, 3, 4, 5, 6}, []byte{}, syscall.MSG_NOSIGNAL)
+            строка в strace: recvmsg(3, {msg_name(32)={sa_family=AF_LOCAL, sun_path="/run/video_mainstream/control"}, msg_iov(1)=[{"\1\0\0\0!\0", 6}], msg_controllen=0, msg_flags=MSG_TRUNC}, MSG_NOSIGNAL) = 6
+            видно, две вещи: что длина этого "\1\0\0\0!\0" такая же, как и у []byte{1, 2, 3, 4, 5, 6}, хоть значения их и не совпадают, так же видно, что вероятно есть какая-то логика в преобразовании адресов, потому что выбивается откуда-то внезапно взявшийся "!"
+        третья попытка:
+            попробовал массив []byte{1, 2, 3, 4, 5, 6, 5}, предполагаю, что на месте второй 5 будет !
+            в strace видно "\1\0\0\0!\0\0"
+        штош... как передать [][]byte вместо []byte в качестве iovec не понятно. Го запрещает мне это делать.
+        Так же я не могу погружаться вглубь ближе к примитивам по модулю, например не могу использовать даже func recvmsgRaw(). Мне дают в пользование только верхние обертки над всем этим. Можно попробовать вместо syscall модуля использовать sys.
+        Полез вглубь гошных модулей-прослоек.
+            модуль syscall функция Recvmsg - повторить запрос не получилось. Полез в сорцы модуля, опускаюсь глубже.
+            модуль sys функция RecvmsgRaw - повторить не получилось, глубже.
+            модуль sys функция Syscall - повторить тоже не получается. Функции передается структура сообщения, заполненная вроде по стандарту, но в strace я вижу совсем не то, что привык видеть:
+                код: _, _, err1 := unix.Syscall(unix.SYS_RECVMSG, uintptr(sockFd), uintptr(unsafe.Pointer(&msgvar)), uintptr(syscall.MSG_NOSIGNAL))
+                strace: recvmsg(3, 0x153820, MSG_NOSIGNAL)      = -1 EFAULT (Bad address)
+            внезапно обнаружил, что сорцы функции Recvmsg https://cs.opensource.google/go/go/+/refs/tags/go1.20.5:src/syscall/syscall_unix.go;l=380 расходятся с тем, что у меня лежит в системе в pkg/mod/golang.org/x/sys@v0.9.0/unix/syscall_unix.go
+            В онлайн доке голенга - recvmsgRaw(fd, p, oob, flags, &rsa)
+            У меня локально - recvmsgRaw(fd, iov[:], oob, flags, &rsa)
+            в сорцах у меня в системе описывается обработка переменной p, которая ускользала ранее от меня.
+            Переписал использование Syscall() с учетом обработки p и у меня получилось получить внятно расшифрованное strace сообщение
+                recvmsg(3, {msg_name(0)=NULL, msg_iov(1)=[{"\1\0\0\0", 4}], msg_controllen=0, msg_flags=MSG_TRUNC}, MSG_NOSIGNAL) = 4
+            пробую повторить оригинальную строку
+                код: iovepart2 := append(append([]byte{33, 0, 0, 0, 2, 0, 0, 0, 21, 0, 0, 0}, []byte("/run/video_mainstream")...), []byte{8, 24, 0, 0}...)
+                strace:     recvmsg(3, {msg_name(0)=NULL, msg_iov(2)=[{"\1\0\0\0", 4}, {"!\0\0\0\2\0\0\0\25\0\0\0/run/video_mainstream\303\261\5\0", 65536}], msg_controllen=0, msg_flags=0}, MSG_NOSIGNAL) = 41
+            есть продвижение дальше, но все-равно откуда-то берется расхождение в конце второго массива байтов msg_iov
+                оригинал:   recvmsg(6, {msg_name(0)=NULL, msg_iov(2)=[{"\1\0\0\0", 4}, {"!\0\0\0\2\0\0\0\25\0\0\0/run/video_mainstream\10\30\0\0", 65536}], msg_controllen=0, msg_flags=0}, MSG_NOSIGNAL) = 41
+            попробовал повносить изменения в iovepart2 - изменения не отражаются в strace. Я полагал ранее, что strace показывает мне запросы, которые делает приложение к ядру, но видимо это не так. Есть два объяснения этому поведению:
+                1. между сисколом и снятием инфы о сисколле проходит какое-то время, за которое какое-то другое приложение изменяет участок памяти где хранится собственно вызов системного вызова.
+                2. это as intended и strace так и должен отражать не то, что я посылаю в аргументах системного взова, а то, что ему ответили
+            попробовал strace miio_record - так же увидел разные значения во втором аргументе. Судя по всему, это нормально и несет в себе какую-то полезную информацию.
+            в любом случае, это несет мне проблемы, потому что это значит, что и при трассировке запросов от miio_record я не видел того, что приложение шлет в аргументах, а видел только измененные значения.
+            Попробовал пе передавать ничего содержательного в байтовых значениях - все снова подставилось, как и было
+                recvmsg(3, {msg_name(0)=NULL, msg_iov(2)=[{"\1", 1}, {"\0\0\0!\0\0\0\2\0\0\0\25\0\0\0/run/video_mainstream-\"\1\0", 65536}], msg_controllen=0, msg_flags=0}, MSG_NOSIGNAL) = 41
+                судя по всему, в аргументах играют роль только параметры длины сообщений (но это не точно).
+                UPD: если завать длину первого байтового массива не равной 4, то вместо {"\1\0\0\0", 4} будет {"\1!\0\0", 4}. Кажется восклицательный знак показывает, что не соответствует длина входящего массива данных и заявленной длины аргумента.
+        теперь неплохо бы понять, что значит 41 в возврате, почему в sys@v0.9.0/unix/zsyscall_linux_amd64.go в func recvmsg одно из возвращаемых значений игнорируется (r0, _, e1) и что вообще в r0 и r1
+            сразу по поводу 41 - это возможно длина байтового значения "!\0\0\0\2\0\0\0\25\0\0\0/run/video_mainstream\303\261\5\0"
+            r0:  41
+            r1:  1390616
+            при повторных запусках значения не меняются.
+            согласно описанию recvmsg (https://pubs.opengroup.org/onlinepubs/009695299/functions/recvmsg.html):
+                Upon successful completion, recvmsg() shall return the length of the message in bytes. If no messages are available to be received and the peer has performed an orderly shutdown, recvmsg() shall return 0. Otherwise, -1 shall be returned and errno set to indicate the error.
+                если возникает ошибка - должен возвращаться -1 в значении. Так как у меня возвращается 41 - делаю вывод, что ошибка 0 - это норма. И 41 - действительно длина сообщения в байтах. Как оказалось, для двух элементов
+            попробовал вызвать два раза подряд один и тот же recvmsg, получил уже встречавшуюся в трассировке miio_record ошибку EAGAIN
+                recvmsg(3, {msg_name(0)=NULL, msg_iov(2)=[{"\1\0\0\0", 4}, {"!\0\0\0\2\0\0\0\25\0\0\0/run/video_mainstream\320n\4\0", 65536}], msg_controllen=0, msg_flags=0}, MSG_NOSIGNAL) = 41
+                r0:  41
+                r1:  1390616
+                [33 0 0 0 2 0 0 0 21 0 0 0 47 114 117 110 47 118 105 100 101 111 95 109 97 105 110 115 116 114 101 97 109 208 110 4 0]
+                recvmsg(3, 0x153818, MSG_NOSIGNAL)      = -1 EAGAIN (Resource temporarily unavailable)
+                r01:  4294967295
+                r11:  0
+                при повторных запусках кстати значение r01 так же не меняется. Если добавить еще один такой же recvmsg - значение так же не меняется.
+        посмотрел более внимательно на трассировку miio_record после первого revcmsg - увидел, что приложение сразу после первого EAGAIN вызывает epoll_ctl
+            epoll_ctl(3, EPOLL_CTL_ADD, 4, {EPOLLIN, {u32=4, u64=4294967300}}) = 0
+            epoll_ctl(3, EPOLL_CTL_ADD, 5, {EPOLLIN, {u32=5, u64=4294967301}}) = 0
+            epoll_ctl(3, EPOLL_CTL_ADD, 6, {EPOLLIN, {u32=6, u64=4294967302}}) = 0
+            epoll_ctl(3, EPOLL_CTL_ADD, 7, {EPOLLIN, {u32=7, u64=4294967303}}) = 0
+            epoll_ctl(3, EPOLL_CTL_ADD, 8, {EPOLLIN, {u32=8, u64=4294967304}}) = 0
+            epoll_ctl(3, EPOLL_CTL_ADD, 9, {EPOLLIN, {u32=9, u64=4294967305}}) = 0
+        очевидно какой-то механизм для отслеживания новых данных. u64=4294967300 значения подозрительно похожи на то, что находится в r01:  4294967295
+        описание сискола: https://www.opennet.ru/man.shtml?topic=epoll_ctl&category=2&russian=0
+            EPOLLIN используется для отслеживания, когда ресурс становится доступен для операций read
+        еще ранее видно создание
+            epoll_create1(EPOLL_CLOEXEC)            = 3
+            добавил его в код
+        там так же есть какой-то сискол с не понятным мне назначением
+            fcntl64(3, F_SETFD, FD_CLOEXEC)         = 0
+            решил его пока не копировать
+        попробовал syscall.EpollEvent{Events: unix.EPOLLIN, Fd: int32(sockFd), Pad: int32(r01)} для syscall.EpollCreate1, но столкнулся с тем, что в трассировке u64 выглядит как-то не так:
+            epoll_ctl(4, EPOLL_CTL_ADD, 3, {EPOLLIN, {u32=3, u64=18446744069414584323}})
+            полез разбираться и оказалось, что передаваемое значение r01 (которое всегда у меня равно 4294967295) при прохождении через int32(r01) превращается в -1.
+            калькулятор показал, что dec 4294967295 это на самом деле 0xffffffff.
+            заметил корреляцию - в примерах epoll_ctl выше из miiio_record u54 является суммой 0xffffffff и инта файлового дескриптора + 1:
+                epoll_ctl(3, EPOLL_CTL_ADD, 5, {EPOLLIN, {u32=5, u64=4294967301}}) = 0
+            Возможно будет проще просто добавлять константу 4294967296 и не париться. Попробуем.
+                syscall.EpollEvent{Events: unix.EPOLLIN, Fd: int32(sockFd), Pad: int32(r01)+int32(4294967296)}
+            Не работает, потому что 4294967296 не вмещается в int - возникает ошибка "(untyped int constant) overflows int"
+            Попробовал syscall.EpollEvent{Events: unix.EPOLLIN, Fd: int32(sockFd), Pad: int32(sockFd)}
+                epoll_ctl(4, EPOLL_CTL_ADD, 3, {EPOLLIN, {u32=3, u64=12884901891}}) = 0
+            итого (при fd = 3):
+                если передать в Pad int32(-1) - strace отображает значение dec 18446744069414584323 = 0x ffffffff00000003
+                если передать в Pad int32(3)  - strace отображает значение dec          12884901891 = 0x        300000003
+                а должно быть                                              dec           4294967299 = 0x        100000003
+                что-то тут не сходится. Кажется нужное значение недостижимо и при передаче положительного int32 и отрицательного. Такое ощущение, что где-то глубже по прослойкам значение трансформируется в более широкое по байтам.
+                Попробую полезть глубже по сорцам. Но оказалось, что глубже ничего уже нет, кроме передачи указателя на структуру.
+            Потупил какое-то время в идею и внезапно пришла мысль, что аргумент Pad может не быть связан с u64, а является какой-то константой, на основе которой вычисляется u64 из u32. Присмотрелся к общей картине и подумал, что Pad может означать сдвиг на ffffffff.
+            Попробовал syscall.EpollEvent{Events: unix.EPOLLIN, Fd: int32(sockFd), Pad: int32(1)}
+                epoll_ctl(4, EPOLL_CTL_ADD, 3, {EPOLLIN, {u32=3, u64=4294967299}}) = 0
+                strace показал то, что и ожидалось.
+        epoll_wait(3, {{EPOLLIN, {u32=5, u64=4294967301}}, {EPOLLIN, {u32=6, u64=4294967302}}}, 64, 59743) = 2
+            согласно https://www.opennet.ru/man.shtml?topic=epoll_wait&category=2&russian=0 структура аргументов такая:
+                epoll_wait(int epfd, struct epoll_event * events, int maxevents, int timeout)
+            однако количество аргументов согласно ману не совпадает с тем, что в гошном коде:
+                EpollWait(epfd int, events []EpollEvent, msec int)
+                последний аргумент тут - тот же, что и в мане. Однако написанный код ожидаемо не повторяет в точности трассировку
+                    код: syscall.EpollWait(r2, []syscall.EpollEvent{socketEpoll}, 59743)
+                    strace: epoll_wait(4, {{EPOLLIN, {u32=3, u64=4294967299}}}, 1, 59743) = 1
+                возможно отсутствие maxevents не так и критично, потому что следим-то мы за одним ресурсом и ивент ожидаем только от него. Не понятно, зачем там maxevents задан в 64, если достаточно одного события.
+                возвращает функция, судя по единице, количество syscall.EpollEvent которые отслеживаются файловым дескриптором epoll.
+        recvmsg(6, {msg_name(0)=NULL, msg_iov(2)=[{"\2\0\0\0", 4}, {"\f\r\0\0\0\20\0\0", 65536}], msg_controllen=16, [{cmsg_len=16, cmsg_level=SOL_SOCKET, cmsg_type=SCM_RIGHTS, [12]}], msg_flags=0}, MSG_NOSIGNAL) = 12
+            сформировал новый msg, с учетом записи controlmessage. Загнал его с epoll_wait в бесконечный цикл.
+            вижу различия в трассировке.
+                recvmsg(3, {msg_name(0)=NULL, msg_iov(2)=[{"\2\0\0\0", 4}, {"\2\0\0\0\0\20\0\0", 65536}], msg_controllen=16, [{cmsg_len=16, cmsg_level=SOL_SOCKET, cmsg_type=SCM_RIGHTS, [5]}], msg_flags=0}, MSG_NOSIGNAL) = 12
+                recvmsg(3, {msg_name(0)=NULL, msg_iov(2)=[{"\2\0\0\0", 4}, {"\3\0\0\0\0\20\0\0", 65536}], msg_controllen=16, [{cmsg_len=16, cmsg_level=SOL_SOCKET, cmsg_type=SCM_RIGHTS, [6]}], msg_flags=0}, MSG_NOSIGNAL) = 12
+                recvmsg(3, {msg_name(0)=NULL, msg_iov(2)=[{"\2\0\0\0", 4}, {"\4\0\0\0\0\20\0\0", 65536}], msg_controllen=16, [{cmsg_len=16, cmsg_level=SOL_SOCKET, cmsg_type=SCM_RIGHTS, [7]}], msg_flags=0}, MSG_NOSIGNAL) = 12
+                recvmsg(3, {msg_name(0)=NULL, msg_iov(2)=[{"\2\0\0\0", 4}, {"\5\0\0\0\0\20\0\0", 65536}], msg_controllen=16, [{cmsg_len=16, cmsg_level=SOL_SOCKET, cmsg_type=SCM_RIGHTS, [8]}], msg_flags=0}, MSG_NOSIGNAL) = 12
+            поведение точно такое, как задумывалось, кроме того, что в контрол сообщении инкрементально растет число (в приере от 5 до 8).
+            В образце оно всегда было равно 12. И не понятно, что это за число в сообщении.
+            Так же из отличий - кажется recvmsg вызываются намного чаще, чем должно быть, а так же приложение падает через какое-то время по непонятной причине. В логах
+                epoll_wait(4, {{EPOLLIN, {u32=3, u64=4294967299}}}, 1, 59743) = 1
+                recvmsg(3, {msg_name(0)=NULL, msg_iov(2)=[{"\2\0\0\0", 4}, {"\30\2\0\0\0\20\0\0", 65536}], msg_controllen=16, [{cmsg_len=16, cmsg_level=SOL_SOCKET, cmsg_type=SCM_RIGHTS, [540]}], msg_flags=0}, MSG_NOSIGNAL) = 12
+                epoll_wait(4, {{EPOLLIN, {u32=3, u64=4294967299}}}, 1, 59743) = 1
+                recvmsg(3, {msg_name(0)=NULL, msg_iov(2)=[{"\2\0\0\0", 4}, {"\31\2\0\0\0\20\0\0", 65536}], msg_controllen=16, [{cmsg_len=16, cmsg_level=SOL_SOCKET, cmsg_type=SCM_RIGHTS, [541]}], msg_flags=0}, MSG_NOSIGNAL) = 12
+                epoll_wait(4, 435f8c, 1, 59743)         = -1 EINTR (Interrupted system call)
+                --- SIGURG {si_signo=SIGURG, si_code=SI_TKILL, si_pid=2704, si_uid=0} ---
+                --- SIGURG {si_signo=SIGURG, si_code=SI_TKILL, si_pid=2704, si_uid=0} ---
+                ... однотипные сообщения
+                --- SIGURG {si_signo=SIGURG, si_code=SI_TKILL, si_pid=2704, si_uid=0} ---
+                2023/07/06 07:04:11 interrupted system call
+                --- SIGURG {si_signo=SIGURG, si_code=SI_TKILL, si_pid=2704, si_uid=0} ---
+                +++ exited with 1 +++
+        внезапно обратил внимание, что после второго recvmsg происходит close(13) сискол. Надо бы выяснить, что это за fd был.
+            оригинал:   recvmsg(6, {msg_name(0)=NULL, msg_iov(2)=[{"\2\0\0\0", 4}, {"\1\0\0\0\0\20\0\0", 65536}], msg_controllen=16, [{cmsg_len=16, cmsg_level=SOL_SOCKET, cmsg_type=SCM_RIGHTS, [13]}], msg_flags=0}, MSG_NOSIGNAL) = 12
+                        mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE, 13, 0) = 0xb6f7b000
+                        close(13)
+            с strace до этого участка fd с номером 13 вообще отсутствует.
+        mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE, 13, 0) = 0xb6f7b000
+            согласно https://www.opennet.ru/man.shtml?topic=mmap2&category=2&russian=0:
+                mmap2(void *start, size_t length, int prot, int flags, int fd, off_t pgoffset)
+            повторил в коде. Действительно, то, что возвращается revcmsg в виеде цифры - это файловый дескриптор. И его номер перестал расти, когда я начал его закрывать.
+            Тем не менее программа все равно падает с
+                epoll_wait(4, 435f8c, 1, 59743)         = -1 EINTR (Interrupted system call)
+                возможные причины падения:
+                    - в epoll_wait 1 вместо 64
+                    - вызов epoll_wait не завязанный на EAGAIN от recvmsg
+        далее. Не понятно, что делать с этими адресами памяти, которыне получаются из mmap.
+            Судя по тому, что я видел в трассировке - никаких сисколов в цикле получения видео больше нет, кроме clock_gettime. Но это видимо только для нанесения отметок о времени на видео.
+            Присмотрелся внимательнее.
+            Заметил, что поначалу цикл действительно не имеет других сисколов, но потом внезапно появляется futex сискол. И появляется он кажется после того, как происходит снятие jpg с другого файлового дескриптора.
+            Создание jpg происходит через сискол open с полным путем указанным для создания. Для mp4 временного файла такого не происходит.
+            Насколько я вычитал из интернета - футекс используется обычно при шаред мемори для контроля семафорами доступа к памяти. Ну или как-то так.
+            Предполагаю, что это жжж неспроста. В голове складывается такой механизм - сначала стягивается полный jpeg, сохраняется в файл и/или память. Потом маленькими сегментами дельты докидываются изменения от этой картинки и таким образом получается видеопоток.
+        чтобы лучше понять, как быть дальше с видеопотоком попробую получить jpeg снапшот.
+            повторяю все сисколы
+            вижу рпазличие в mmsp - там выделяется не 4096 байт, а 44 килобайта
+                mmap отдает адрес 0xb6970000
+            потом почему-то вызывается
+                ioctl(15, TCGETS, 0xbeb83a58)           = -1 ENOTTY (Not a tty)
+                хорошо бы понять, почему там такой адрес памяти. В тьрассировке он больше не встречается. Дельта 0xbeb83a58 - 0xb6970000 = 0x08213a58
+                сам сискол гуглится, но не понятно, зачем он тут нужен. Тем более с TCGETS (это для управления устройствами терминалов, насколько я понял, типа tty)
+            потом
+                munmap(0xb6970000, 45056)               = 0
+                и close(фд от mmap)
+            при попытке добавить epoll_wait для jpeg снепшота возник какой-то запердон, с которым я ёбся три часа и так его и не победил.
+            Вкратце - epoll_wait для mainstream видео выглядит вот так:
+                код:    syscall.EpollWait(epollfd, []syscall.EpollEvent{socketEpoll}, 59743)
+                strace: epoll_wait(5, {{EPOLLIN, {u32=3, u64=4294967299}}}, 1, 59743) = 1
+            а для jpeg какого-то хуя выглядит вот так:
+                код:    syscall.EpollWait(epollfd, []syscall.EpollEvent{socketEpolljpeg}, 59743)
+                strace: epoll_wait(5, {}, 1, 59743) = -1
+            несколько раз все перепроверил - все сделано в точности так же, как для мейнстрим видео, переменные и указатели нигде не перепутанны, но почему-то возникает эта необъяснимая хуета.
+            Пробовал оставить только epoll для jpeg - та же ситуация - пустые брекеты {}.
+        попробовал стянуть циклом по 4096 байт с адреса памяти и внезапно получил в результате видео закодированное hevc.
+            Но у видео очень много артефактов, явно внутри камеры есть какая-то еще постобработка.
+            Попробовал перенаправить бинарный поток в пайп и скормить пайп ffmpeg для arm, как сделано в https://github.com/telmomarques/xiaomi-360-1080p-hacks/issues/2#issuecomment-490490622 - не вышло, кажется проблема именно в ffmpeg бинаре для арма, потому что перенаправленный бинарный поток с файла у меня локально на системе сработал нормально. приводить ошибку нет смысла, потому что там бинарный вывод, не подверженный кодировке.
+        Попробовал записать один и тот же отрывок видео одновременно запустив запись во временный файл через miio_record и через свой бинарь.
+            Оказалось, что в файле от miio_record есть в точности совпадающие бинарные куски с файлом из сокета. Можно попробовать понять, что он делает с сырым потоком.
+            судя по тому, что я вижу - в переработанном файле содержатся куски после определенного оффсета. Пример:
+            (кадр 1)вот этот кусок исчезает
+                FF FF FF FF 9C 8B 22 00 63 03 00 00 00 10 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 00 00 61 E9 14 00 1F 37 4D 50 A2 78 23 E1 43 03 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01
+(FFFFFFFF9C8B220063030000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000061E914001F374D50A27823E14303000000000000000000000000000000000001)
+            (кадр 1)вот этот кусок переходит в новый файл
+                02 01 D0 00 45 C4 04 58 FE 10 CB 76 6E 00 00 03 01 AD 32 DD D8 00 00 03 00 0F 0B 51 D7 29 70 E2 C9 45 82 3F DC 1E 92 07 47 3F 76 E8 E6 79 84 67 DB 6D D3 0B 10 F5 EF 8A C8 E1 34 A3 1B 82 C7 C6 3D 7C 91 C8 AC 1F CB 12 7F 62 0D 5F 75 F5 0F 11 96 5B 7A 02 24 4B B6 00 0D 5E 8F 74 05 AA 0E DD 9E A1 91 54 1A FF 60 55 B2 F8 D2 5A 7F 6C 18 7A FF C9 2A A3 8E 60 4E 22 08 10 29 4F 47 0E B2 C2 2B D6 37 78 01 E1 C2 E2 78 6B D7 9B 3E 11 10 A0 17 25 2C 07 79 9E 26 10 33 0F 73 63 C0 4E 4B B8 4A 34 72 13 AA D2 21 8E 25 A0 D9 90 07 C5 08 01 E6 E7 86 31 B9 B2 B0 E7 44 98 4D DF F6 9E BC F9 9B 10 73 0F 8B 7E 8C 25 A8 DD BB 2F BA D1 2A 58 2F 97 04 82 1E E0 42 F4 AC 5A 61 65 72 37 4C 5C 0D BF 78 C4 B9 13 16 35 82 DE DB 27 4C 73 38 53 C2 56 63 8B 74 42 C5 2B 6F 4A 6B 40 FC 48 32 F0 A2 10 B5 46 48 9C 92 F1 B3 14 DF E2 7E 38 FD BF BE 30 48 E1 C3 E4 E8 6D 29 3E 98 93 A4 90 15 60 E5 6B 53 CE 2F 50 7D A8 83 F4 B0 A5 CE EB A4 CB 83 B9 CE 6D 72 72 D5 26 34 9B 15 A9 11 E5 BA 67 6C 79 97 BB F8 FB 59 93 FC 60 13 CF F1 25 52 4A 5B 4D DA 11 E8 8E 56 A2 C1 3F 05 3D 7E 72 E3 5F 51 B6 78 14 11 60 24 94 AE 72 05 FB 17 5D 8F 45 EE 31 A9 51 25 4E E7 7C EE D5 E6 94 61 4E 4E F9 93 90 28 24 C0 12 36 17 9B A4 01 FE C0 35 CC 9F 36 EB E6 46 5D 3B 4C E8 FB 1D EF C0 BD B5 AE 53 64 BF 6C B3 52 70 94 2F 0B C0 B9 79 4C D0 F1 C9 A8 24 0B CC 9C 46 38 0D 3B E8 2D 59 7D B1 64 D3 4E D1 7D ED 10 A7 B5 C9 76 99 C4 CD B2 E8 DA FA D0 46 A5 75 18 52 8A AA 7C 36 B0 59 96 24 EA D4 D5 9E 74 ED 4F 0D 97 D1 F9 83 66 08 9B 87 3E 7C 89 4A 91 65 1A 4A BD B5 50 D1 74 CA D7 8F CD 78 4F B1 AB 93 A0 17 F7 C0 C4 D1 75 0D 38 5C 97 38 50 0D 1C F8 02 1A 0A EE B7 90 BA FE 3E 2B 82 F7 37 1C C7 64 16 23 96 90 FF 53 2E 4D BE 67 40 44 2B 5B 8E C8 D5 F8 6E 30 6F D5 EA BD E7 C5 C5 0A B6 E2 C5 9D 61 C0 73 88 5B CC 74 31 36 75 79 57 6F 06 AA A5 4F 08 77 12 FC 33 69 34 82 EF 19 33 7D DF 01 7D 62 44 94 76 55 65 97 1C E9 14 B0 EE E7 C9 C5 6B DB 46 81 30 30 15 4F 22 02 57 E9 FC F3 6F 51 F7 F1 DA 27 03 EC 09 4B C3 40 2C 3C 35 97 64 39 13 09 6D E9 3A 42 BA B2 E9 83 33 B4 05 60 B0 70 15 0E E5 3A 97 C5 A1 F5 5B F9 2A 71 3C 2B FF 95 10 98 D8 95 CE 6A 93 43 1E B2 41 30 A0 37 87 9F 5D B3 9B 3B A2 FF E9 59 27 DE A1 E2 74 C4 A0 1C 4C E4 8B EF E6 E2 95 BC 17 6F BA BD DF 03 D9 49 8E 01 7D C8 F3 66 13 90 A7 DE 78 6E 7D F2 E7 3A 11 8F 11 21 E0 43 02 6F F0 46 EF 65 C9 8A 45 57 EF 7D E3 D3 02 BC D3 AA 80 48 44 F7 96 44 AF 36 0C 3A C1 07 70 09 A7 3F 24 B0 00 8F 02 71 1B 37 91 4C DE C2 94 EB 4C A5 7A 2C DB C2 BA 41 F1 EA 3E D2 D3 69 87 2A 21 E0 9A CF F6 9C
+(0201D00045C40458FE10CB766E00000301AD32DDD8000003000F0B51D72970E2C945823FDC1E9207473F76E8E6798467DB6DD30B10F5EF8AC8E134A31B82C7C63D7C91C8AC1FCB127F620D5F75F50F11965B7A02244BB6000D5E8F7405AA0EDD9EA191541AFF6055B2F8D25A7F6C187AFFC92AA38E604E220810294F470EB2C22BD6377801E1C2E2786BD79B3E1110A017252C07799E2610330F7363C04E4BB84A347213AAD2218E25A0D99007C50801E6E78631B9B2B0E744984DDFF69EBCF99B10730F8B7E8C25A8DDBB2FBAD12A582F9704821EE042F4AC5A616572374C5C0DBF78C4B913163582DEDB274C733853C256638B7442C52B6F4A6B40FC4832F0A210B546489C92F1B314DFE27E38FDBFBE3048E1C3E4E86D293E9893A4901560E56B53CE2F507DA883F4B0A5CEEBA4CB83B9CE6D7272D526349B15A911E5BA676C7997BBF8FB5993FC6013CFF125524A5B4DDA11E88E56A2C13F053D7E72E35F51B6781411602494AE7205FB175D8F45EE31A951254EE77CEED5E694614E4EF993902824C01236179BA401FEC035CC9F36EBE6465D3B4CE8FB1DEFC0BDB5AE5364BF6CB35270942F0BC0B9794CD0F1C9A8240BCC9C46380D3BE82D597DB164D34ED17DED10A7B5C97699C4CDB2E8DAFAD046A57518528AAA7C36B0599624EAD4D59E74ED4F0D97D1F98366089B873E7C894A91651A4ABDB550D174CAD78FCD784FB1AB93A017F7C0C4D1750D385C9738500D1CF8021A0AEEB790BAFE3E2B82F7371CC76416239690FF532E4DBE6740442B5B8EC8D5F86E306FD5EABDE7C5C50AB6E2C59D61C073885BCC7431367579576F06AAA54F087712FC33693482EF19337DDF017D624494765565971CE914B0EEE7C9C56BDB46813030154F220257E9FCF36F51F7F1DA2703EC094BC3402C3C3597643913096DE93A42BAB2E98333B40560B070150EE53A97C5A1F55BF92A713C2BFF951098D895CE6A93431EB24130A037879F5DB39B3BA2FFE95927DEA1E274C4A01C4CE48BEFE6E295BC176FBABDDF03D9498E017DC8F3661390A7DE786E7DF2E73A118F1121E043026FF046EF65C98A4557EF7DE3D302BCD3AA804844F79644AF360C3AC1077009A73F24B0008F02711B37914CDEC294EB4CA57A2CDBC2BA41F1EA3ED2D369872A21E09ACFF69C)
+                miio_record:    001F:7BA0 - 001F:7EE0
+                my_own:         0023:9060 - 0023:93A0
+            (кадр 1)далее идет куча нолей, которые тоже пропускаются
+            далее в новый файл добавляется разделитель
+                00 00 03 F3
+                (000003F3)
+            (кадр 2)вот этот кусок исчезает
+                FF FF FF FF 9E 8B 22 00 17 04 00 00 00 10 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 00 00 62 E9 14 00 6E FA 4D 50 A2 78 23 E1 F7 03 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01
+(FFFFFFFF9E8B220017040000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000062E914006EFA4D50A27823E1F703000000000000000000000000000000000001)
+            (кадр 2)вот этот кусок переходит в новый файл
+                02 01 D0 00 4D C4 0F 60 FE 63 A6 92 27 00 00 03 00 01 D7 EA 3D CE 30 00 4B DF F5 A1 47 6E 38 67 A1 75 AF 94 2C B3 85 55 F1 91 A9 CE 36 F6 72 DD 35 FE 94 76 6F 31 87 28 6F EB BB 19 68 68 56 B6 B3 B1 B5 60 5D 4C 63 AB D2 28 43 40 D1 73 FE 00 7D 64 A9 82 A3 B3 2C 79 85 46 1C 3C 29 8E 81 A1 50 B9 95 58 11 73 1C 94 28 93 5A 60 99 54 76 3D 6A C7 46 B5 67 C8 96 E1 30 43 A3 CD E2 10 66 57 1A 44 0F 9C F3 4A 4E DE 65 87 B2 29 7D 51 A0 BE 44 1B D9 64 85 03 D1 BE 1F 84 30 47 14 F5 4C DF A4 14 04 ED B1 BE 27 F4 FF 39 35 4D 6F AF 6A 5B 15 5B 70 16 CA B2 17 FE 6D 8B 69 62 6F 7E 1C 4F 93 BB 6A 70 52 92 DA 41 B9 39 99 7E 64 F5 27 75 49 E7 6D 87 89 55 29 8B A7 A0 22 A6 FE 7E 5F C1 10 9D AB 55 91 9B 81 E3 56 DB 4A C8 76 E0 1B AD 8C AA 42 B4 EB DA 17 4B 85 22 9F 40 64 FC 89 B9 9E CC 9B 46 64 04 38 46 ED 34 BA 59 80 A2 87 DF C6 6C 57 DE 89 06 26 35 69 A5 FC 2E 56 B9 CD 77 93 AE DB C4 32 01 AD A7 AA 46 6E 6F D3 2F FD 9E A9 0A 6C 29 A5 AF 26 8F 3F 2B EF 92 59 09 71 E0 27 8B C9 3D 2D 69 03 08 A8 D5 EF 2A 00 F8 9B F4 ED A7 96 54 0B 6A 82 4A 12 AF 60 15 A2 4C C5 90 E6 95 52 53 22 C1 92 00 4F 73 7A 9B EA A6 33 ED 87 1E 98 90 06 16 D5 87 CA 57 B3 17 A1 24 B8 5A C6 A8 F6 71 50 9D 57 C3 29 DD 53 E1 73 AD 64 93 54 3E 9C 6E 2C FF 00 9B 22 B2 60 24 57 34 1E D5 2E 67 AC 2F A2 22 3D 4D 5F 8A 3F E4 8D 8A 8D F3 A2 B4 C1 A5 40 90 78 C2 84 FC 42 6A EB 6F 0C 30 4C B2 30 55 EC 39 A9 72 46 E1 95 68 76 10 B2 44 9A E3 9F 45 24 6B A0 C9 7E 94 CA 86 4B 57 5D D0 68 05 75 A5 7D 38 E9 28 95 A4 39 47 3C 56 F6 23 4B 0C 91 96 69 E7 68 91 F2 54 1B 4F 75 6C 04 65 ED 35 46 EF 1D 5B 71 3C 6D 2E F1 75 11 F8 42 48 6F 65 D4 FC 32 1A 1C 16 7E 48 87 19 D3 37 D6 C0 AF AE DC FC 7E 6A 48 B0 50 68 74 AC CA 33 C4 AE 8A 88 62 9A AF 42 2D 5A DF 6C C6 54 50 14 35 62 8C 58 76 F5 28 29 0B 44 0A 82 2D 3B 66 C8 7F 63 54 00 1A 80 A3 9E 37 D3 64 1C 50 99 56 39 AF 80 15 B9 18 06 97 C4 63 B2 5A 1B 5A ED 3D 53 DD 99 17 05 6A F9 71 D8 FB 15 7A A5 5F 3B F7 D9 32 91 71 5D 84 A5 E2 8A C1 DA 59 39 25 26 51 6E 29 02 F1 B1 7A 91 C3 65 EA DF 71 45 2D F4 55 C3 2F 20 1D 6C DE 4C DB 9C 0F E0 11 EE 17 F7 74 A6 92 1E EB DF F1 49 CF AC C6 99 42 7E 45 1E D3 E0 73 5B BE 5B 13 A6 33 29 C4 95 20 75 B6 A9 98 F2 44 8B 38 CE AF F3 D8 08 AE DC F0 70 4B 45 84 0E 54 C8 AC 58 58 C9 B2 00 8D C3 8B 0B A4 A9 73 87 A8 BE 6C 4C B8 3D 4B F9 26 2B 84 96 0E 27 79 8A 39 6C FC 94 43 8E E4 A0 A5 6E 90 E2 85 B7 E0 E7 D3 C0 30 99 53 11 72 0D 00 AE C4 A1 3E F1 C2 BA 1F 28 3F 61 88 A8 51 65 F2 22 2E FB C8 F0 75 BB E9 CF 9D 14 10 27 73 B2 19 EB D6 9C A1 E4 D4 8F 6D A3 BB BA DD 2E 8D D6 BC 96 14 02 AB 5C A2 17 22 AD 49 9F 27 35 67 10 A4 F9 08 0A 0C F4 5D 91 61 80 0C FA F5 19 FE C2 A7 C1 AE 4F B3 2F 4A 9A 49 BA CB 62 DF 4A D4 C6 03 B0 6E 97 31 C7 4D 80 60 1A CC 4C 14 3A 12 7E 1D 75 DD B0 30 24 05 B8 58 99 B3 1B 88 72 12 5B A4 19 A1 A6 2F 90 F6 74 F9 4B 7B 5B FB 41 9A C3 9F 84 53 00 D5 5D D1 1D D0 B3 65 F5 D5 AD 39 E1 0D D5 48 7B 2B 9A F3 E4 BB 3E 1A 5F C7 F8 62 D9 EB 90 B4 52 F1 65 F6 CD 9E 48 53 45 08 19 AC 80 F2 F3 83 F4 EF 85 04 EF 5D 30 3F A0 A0 5D 66 0A A2 CA B2 FF 80 28 30 46 0F 1F 7F ED 58
+(0201D0004DC40F60FE63A692270000030001D7EA3DCE30004BDFF5A1476E3867A175AF942CB38555F191A9CE36F672DD35FE94766F3187286FEBBB19686856B6B3B1B5605D4C63ABD2284340D173FE007D64A982A3B32C7985461C3C298E81A150B9955811731C9428935A609954763D6AC746B567C896E13043A3CDE21066571A440F9CF34A4EDE6587B2297D51A0BE441BD9648503D1BE1F84304714F54CDFA41404EDB1BE27F4FF39354D6FAF6A5B155B7016CAB217FE6D8B69626F7E1C4F93BB6A705292DA41B939997E64F5277549E76D878955298BA7A022A6FE7E5FC1109DAB55919B81E356DB4AC876E01BAD8CAA42B4EBDA174B85229F4064FC89B99ECC9B4664043846ED34BA5980A287DFC66C57DE8906263569A5FC2E56B9CD7793AEDBC43201ADA7AA466E6FD32FFD9EA90A6C29A5AF268F3F2BEF92590971E0278BC93D2D690308A8D5EF2A00F89BF4EDA796540B6A824A12AF6015A24CC590E695525322C192004F737A9BEAA633ED871E98900616D587CA57B317A124B85AC6A8F671509D57C329DD53E173AD6493543E9C6E2CFF009B22B2602457341ED52E67AC2FA2223D4D5F8A3FE48D8A8DF3A2B4C1A5409078C284FC426AEB6F0C304CB23055EC39A97246E195687610B2449AE39F45246BA0C97E94CA864B575DD0680575A57D38E92895A439473C56F6234B0C919669E76891F2541B4F756C0465ED3546EF1D5B713C6D2EF17511F842486F65D4FC321A1C167E488719D337D6C0AFAEDCFC7E6A48B0506874ACCA33C4AE8A88629AAF422D5ADF6CC654501435628C5876F528290B440A822D3B66C87F6354001A80A39E37D3641C50995639AF8015B9180697C463B25A1B5AED3D53DD9917056AF971D8FB157AA55F3BF7D93291715D84A5E28AC1DA59392526516E2902F1B17A91C365EADF71452DF455C32F201D6CDE4CDB9C0FE011EE17F774A6921EEBDFF149CFACC699427E451ED3E0735BBE5B13A63329C4952075B6A998F2448B38CEAFF3D808AEDCF0704B45840E54C8AC5858C9B2008DC38B0BA4A97387A8BE6C4CB83D4BF9262B84960E27798A396CFC94438EE4A0A56E90E285B7E0E7D3C030995311720D00AEC4A13EF1C2BA1F283F6188A85165F2222EFBC8F075BBE9CF9D14102773B219EBD69CA1E4D48F6DA3BBBADD2E8DD6BC961402AB5CA21722AD499F27356710A4F9080A0CF45D9161800CFAF519FEC2A7C1AE4FB32F4A9A49BACB62DF4AD4C603B06E9731C74D80601ACC4C143A127E1D75DDB0302405B85899B31B8872125BA419A1A62F90F674F94B7B5BFB419AC39F845300D55DD11DD0B365F5D5AD39E10DD5487B2B9AF3E4BB3E1A5FC7F862D9EB90B452F165F6CD9E4853450819AC80F2F383F4EF8504EF5D303FA0A05D660AA2CAB2FF802830460F1F7FED58)
+                miio_record:    001F:7EE0 - 001F:82E0
+                my_own:         0023:A060 - 0023:A450
+            (кадр 2)далее идет куча нолей, которые тоже пропускаются
+            далее в новый файл добавляется разделитель (почему другой?)
+                00 00 05 1A
+                (0000051A)
+            (кадр 3)вот этот кусок исчезает
+                FF FF FF FF 9F 8B 22 00 3E 05 00 00 00 10 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 00 00 63 E9 14 00 BE BD 4E 50 A2 78 23 E1 1E 05 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01
+(FFFFFFFF9F8B22003E050000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000063E91400BEBD4E50A27823E11E05000000000000000000000000000000000001)
+            (кадр 3)вот этот кусок переходит в новый файл
+                02 01 D0 00 55 C4 0D 60 FE 58 89 CD F9 00 01 D6 CE 2B 16 FA DF E7 5B 3F 36 A1 BA 2D E6 68 77 7B EB 97 B8 DC 60 91 B6 7C 15 12 FE E4 F5 9F 38 18 97 75 C7 6E 97 F3 25 9E 8C E1 40 0E CD F1 A1 01 0F 81 67 39 74 10 28 68 EA C1 80 46 B7 12 21 8B D7 A3 8A 36 52 DB CF BF 77 59 69 4E CC A0 4B 75 68 DF 7C 01 A5 99 8D BF 98 0E B0 69 4F FF 1B FE D8 73 56 69 27 06 05 DE ED 8F 75 6B D2 E9 EA D8 57 CE 73 E5 88 3A 7D E0 C7 00 AE 92 CF 22 FF 1E C9 59 F5 7A 8A 6C 93 EE 16 E0 0C DA A0 F9 38 2C 8D 16 54 53 53 B0 F2 E1 C2 E0 C2 C8 3A 7C E3 69 73 86 3E 28 8D 64 06 78 FF 69 0B B9 60 4C 37 27 D0 0B 21 29 28 4B 05 E1 5A FF 3A 80 EA 53 01 31 A0 F6 CD 60 EC 80 82 23 82 38 7D EA 11 A0 60 DB 50 90 96 3C 16 1C D2 96 BC B7 96 5E 2E F8 F1 AB 07 81 67 DF D2 D8 D8 EA 0A FF C5 2A 6F 7C 00 17 A8 5A 90 24 44 71 65 FF 52 B4 EA C7 60 E6 FA 4B DE 4C 56 D0 48 F2 DD A3 9B 58 40 AF 6F E4 F2 37 F3 E8 C4 B1 D3 A0 08 1B 70 44 CB 0C A4 2C A0 6F 99 D6 6E 6E 84 D7 89 F7 DD E6 EA 96 73 9F 55 21 82 E8 9A 73 4C 68 B1 E3 87 9E 02 C3 92 00 11 19 FE 23 EC BF C5 37 AE DC F7 46 CF 66 98 B0 A9 F7 9A B0 5B 94 3B 3A FB 30 8D DC 0D 0D BF 4D 43 81 50 DE 3C 22 81 F9 48 03 A7 38 99 39 6C 69 56 BF 44 47 AD BF 98 62 D4 63 70 BE C1 6C 08 DC 3E 5D B9 BE BA C7 BB C8 0A C1 FC 22 BE E8 2C B0 1B 9C 8E 24 76 23 68 E2 59 DD BA 65 63 A9 A7 4E 7D EE 96 97 58 1F E6 45 B5 A3 BD B2 74 16 22 15 05 09 E0 AA 1B 1C 2D C3 07 01 D5 A5 6B 7C 3B 52 04 51 5C 87 58 F3 17 AB 8B 21 DD 5A 16 24 0C 76 01 1C 74 2A 78 DF AE F6 49 72 1D 5D 75 A3 69 F0 D1 A0 61 CE 79 7E 9B C4 EF DC E2 D4 43 4A 32 D9 27 5D 39 26 DB 5E 34 4D A8 19 AF EE A5 7C 4E B6 40 A2 D6 31 C7 62 92 0E FD 4C 8C E6 A9 74 48 B3 CB 1A E3 1A E2 8D 78 33 2B 18 07 CA 43 C0 FA EF AB F6 79 59 B6 36 91 DC AD 64 BD 61 DF 5D 30 01 DB E4 50 77 1C AC 1D 4D B7 2C EF 03 2F 5E C5 77 28 04 B4 39 D8 B9 C4 E2 9C BF EB 16 AD 4B A8 A6 2B 12 1F EE B3 EE 68 FC 51 4B D0 25 A9 4A EB 13 53 3C 68 A7 38 08 70 E1 C5 7E E7 14 FA EF D3 AD 6F 75 AC F0 7A F3 87 A3 AD 90 FD 25 A7 61 82 85 D2 AA 78 0D A8 3E C6 72 59 58 81 B3 0D 4A 3F F7 AC 57 69 0B 51 DB D6 3C 96 32 73 C2 48 0C 52 5A B8 F1 80 82 ED E3 FC E5 9F 43 33 B7 73 7D BC 87 28 94 65 D0 55 3F C8 4C 98 34 54 31 2F 9F 42 AC A3 7D FB 38 E0 E0 FF 23 D7 1B 62 B5 77 10 A9 A9 B2 2E E2 68 40 33 BB 1B 70 CB AC 9C 54 68 26 F0 A3 54 4F 5D CB 28 C3 44 B9 53 C2 A1 97 C4 AF C0 65 AF CE 4B AA 56 27 9D B8 13 F8 AD 40 26 39 2B C4 B2 CE 40 63 57 A1 5B D9 C0 01 6A 50 3A 41 E9 2D DA 05 D9 F5 52 6C 31 B2 2D C6 54 48 9F 01 B0 06 04 BF 09 27 89 92 1A 11 9C D6 48 16 BD DB A5 B9 FF 26 66 5D 0A 78 BD 54 6E 76 FA C5 0B 3E 7E CD 10 70 1C 6C 08 57 FE E1 6F E2 5F E1 3F CC 83 B0 9E 3C C0 39 17 9D 5C E4 64 39 94 DB 90 E6 70 68 5D 68 AD 86 AD DE C3 53 15 E4 0E 51 20 0B 82 91 3A B1 6F 14 29 A0 A0 04 C6 44 B7 E5 67 21 97 E7 17 7B F8 4E 4D B8 92 2C 41 0C CF D4 A9 80 A8 8C 16 63 F6 CB 8E 5E BC 02 A1 FE D6 76 C4 92 1A 72 6A CC 95 65 E9 4E B0 4A AF 97 A9 02 53 A2 EF 78 9A AA 73 4C 02 6A 32 66 4D E6 60 03 42 60 A6 E7 E9 34 C3 4A 3C C3 C1 5F E8 9A C7 5B 1C C0 66 F7 99 2B 1D E2 5A 79 E7 36 FC 88 66 90 24 CC 1A 3B 2A 36 04 8A 69 C8 50 2E DB E2 2E 4F 4C 99 8E 7B D9 8E AD B9 65 51 5B C5 DB 14 6A 80 F1 6B EF 63 40 ED 10 4A 25 3B 8C 00 7C 33 87 8B 9F 8E B1 BF 7D BA BC 4D 0A E9 32 6F 6D A5 8E 97 C1 B8 67 2B 66 CD C0 55 C9 54 AD C9 47 FB C1 B5 0E 8B BC 71 3E 07 EF B0 5B A1 AD 6F 42 28 2D 58 D3 0B 43 E4 05 2B 64 57 33 DD 25 22 59 CA F3 EB BB 16 33 73 40 E0 8C 51 87 4C 2E 81 1D DA BB 76 64 A9 CB F5 B0 49 5E 1B BE DA 29 0B DB 37 68 A0 98 5C 47 32 2A 6A 19 4B C5 81 40 31 BB 14 EA 93 23 92 5A 69 34 38 96 86 F3 6F 05 F8 12 92 C2 DF A4 9A D9 26 50 C5 F3 FF 7B F4 B4 43 E0 F8 90 F4 4A 04 D8 06 81 68 09 47 86 25 DF A7 56 70 A1 A4 46 67 C8 78 7A F4 9C 70 91 40 60 82 D2 90 BF DF 9A AC 07 93 F1 65 60 F8 B0 AC 51 0A 41 F7 EC A9 E0 16 93 03 62 0A BC B4 C5 B9 B7 43 B1 18 50 8F FC 2E 03 93 09 AE D3 D2 A3 F6 A9 37 68 BA 12 25 E3 7F 5C 4D 46 8E F3 5D 33 82 D5 CF A0 C8 30 1F 4D 7A 9A C6 58 3D 46 73 A8 6C 69 74 00 73 87
+(0201D00055C40D60FE5889CDF90001D6CE2B16FADFE75B3F36A1BA2DE668777BEB97B8DC6091B67C1512FEE4F59F38189775C76E97F3259E8CE1400ECDF1A1010F81673974102868EAC18046B712218BD7A38A3652DBCFBF7759694ECCA04B7568DF7C01A5998DBF980EB0694FFF1BFED8735669270605DEED8F756BD2E9EAD857CE73E5883A7DE0C700AE92CF22FF1EC959F57A8A6C93EE16E00CDAA0F9382C8D16545353B0F2E1C2E0C2C83A7CE36973863E288D640678FF690BB9604C3727D00B2129284B05E15AFF3A80EA530131A0F6CD60EC80822382387DEA11A060DB5090963C161CD296BCB7965E2EF8F1AB078167DFD2D8D8EA0AFFC52A6F7C0017A85A9024447165FF52B4EAC760E6FA4BDE4C56D048F2DDA39B5840AF6FE4F237F3E8C4B1D3A0081B7044CB0CA42CA06F99D66E6E84D789F7DDE6EA96739F552182E89A734C68B1E3879E02C392001119FE23ECBFC537AEDCF746CF6698B0A9F79AB05B943B3AFB308DDC0D0DBF4D438150DE3C2281F94803A73899396C6956BF4447ADBF9862D46370BEC16C08DC3E5DB9BEBAC7BBC80AC1FC22BEE82CB01B9C8E24762368E259DDBA6563A9A74E7DEE9697581FE645B5A3BDB2741622150509E0AA1B1C2DC30701D5A56B7C3B5204515C8758F317AB8B21DD5A16240C76011C742A78DFAEF649721D5D75A369F0D1A061CE797E9BC4EFDCE2D4434A32D9275D3926DB5E344DA819AFEEA57C4EB640A2D631C762920EFD4C8CE6A97448B3CB1AE31AE28D78332B1807CA43C0FAEFABF67959B63691DCAD64BD61DF5D3001DBE450771CAC1D4DB72CEF032F5EC5772804B439D8B9C4E29CBFEB16AD4BA8A62B121FEEB3EE68FC514BD025A94AEB13533C68A7380870E1C57EE714FAEFD3AD6F75ACF07AF387A3AD90FD25A7618285D2AA780DA83EC672595881B30D4A3FF7AC57690B51DBD63C963273C2480C525AB8F18082EDE3FCE59F4333B7737DBC87289465D0553FC84C983454312F9F42ACA37DFB38E0E0FF23D71B62B57710A9A9B22EE2684033BB1B70CBAC9C546826F0A3544F5DCB28C344B953C2A197C4AFC065AFCE4BAA56279DB813F8AD4026392BC4B2CE406357A15BD9C0016A503A41E92DDA05D9F5526C31B22DC654489F01B00604BF092789921A119CD64816BDDBA5B9FF26665D0A78BD546E76FAC50B3E7ECD10701C6C0857FEE16FE25FE13FCC83B09E3CC039179D5CE4643994DB90E670685D68AD86ADDEC35315E40E51200B82913AB16F1429A0A004C644B7E5672197E7177BF84E4DB8922C410CCFD4A980A88C1663F6CB8E5EBC02A1FED676C4921A726ACC9565E94EB04AAF97A90253A2EF789AAA734C026A32664DE660034260A6E7E934C34A3CC3C15FE89AC75B1CC066F7992B1DE25A79E736FC88669024CC1A3B2A36048A69C8502EDBE22E4F4C998E7BD98EADB965515BC5DB146A80F16BEF6340ED104A253B8C007C33878B9F8EB1BF7DBABC4D0AE9326F6DA58E97C1B8672B66CDC055C954ADC947FBC1B50E8BBC713E07EFB05BA1AD6F42282D58D30B43E4052B645733DD252259CAF3EBBB16337340E08C51874C2E811DDABB7664A9CBF5B0495E1BBEDA290BDB3768A0985C47322A6A194BC5814031BB14EA9323925A6934389686F36F05F81292C2DFA49AD92650C5F3FF7BF4B443E0F890F44A04D806816809478625DFA75670A1A44667C8787AF49C7091406082D290BFDF9AAC0793F16560F8B0AC510A41F7ECA9E0169303620ABCB4C5B9B743B118508FFC2E039309AED3D2A3F6A93768BA1225E37F5C4D468EF35D3382D5CFA0C8301F4D7A9AC6583D4673A86C6974007387)
+                miio_record:    001F:82E0 - 001F:87F0
+                my_own:         0023:B060 - 0023:B570
+            просмотрел так же далее глазами хексдамп файла от miio_record - разделители разные. обычно 00 00 03 <и что-то еще>, иногда 03 тоже меняется.
+            итак:
+                мой файл: [[4096],[4096]...[4096]]
+                    размер кратен 4096, лишнего ничего не дописывается
+                            [4096] --> [:100] + [100:<окончание байтов>] + [0...0]
+                                        100 байт в кадре - судя по всему заголовок со служебной инфой, байты разнятся, но что внутри - не понятно (возможно есть равномерно инкрементирующие части, стоит проверить)
+                                        второй кусок - собственно кадр, но обрезать его не так просто потому что в середине кадра могут быть так же нули. Неизвестно, может ли там быть больше чем один ноль подряд, но обрезать надо как-то по-особенному. Так же не понятно, может ли содержательная часть кадра оканчиваться на ноль или на несколько.
+            пример заголовка:
+[255    255     255     255     113     136     34      0       57      3       0       0       0       16      0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       000       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       100       0       40      231     20      0       75      26      155     78      162     120     35      225     25      3       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       001]
+
+            5, 6 инкрементально увеличиваются. 5 - младший разряд, 6 - старший. 7 - еще более старший, выяснил это посмотрел более старый файл. Вероятно 8 может быть еще более старшим, но в ротации его не поймать. Эти 3-4 байта - походу таймштамп, потому что 7 разнится только меджу записанными в разное врмея файлами. То есть отсчет идет не от начала записи, а видимо по юникстайму, но это не точно.
+            Погуглил. Выяснил, что юникс таймштамп кодируется как раз 4 байтами. Только переведенный тамйштамп с моей машины показывает какое-то странно маленькое значение в hex. К тому же инкремент младшего разряда увеличивается на 1-2 каждый кадр, а кадров минимум 20 в секунду. Значит это не юникс-таймштамп. Проверил по strace - это не связано с адресом памяти, который возвращает mmap, потому что когда я добавил munmap - адрес перестал меняться. И это не может быть возвращаемое в recvmsg значение потому что оно идет от нуля, а в моем файле - не от него.
+            В хидере есть так же просто инкрементальные значения с 65 и 66 точно и возможно 67 и 68 также.
+            Попробовал поискать, где может задаваться размер кадра (ffmpeg говорит, что он 2304x1296), но не нашел подходящих значений. Оно там не может задаваться, просто я не смог найти.
+            Разрешение довольно странное. минимальная ячейка - (144.0, 81.0), получается делением на 16 исходного.
+            Вероятно информация о кадре находится в пейлоаде. Пока оставлю идею ковыряния пейлоада.
+            Попробовал проанализировать файл-образец, написал программу, которая выделяет фреймы из потока, полученного мной (убирает хидеры и очищает нули) и эти фреймы ищет в образцовом файле от miio_record. Запринтил участки между фреймами. Код программы анализа сохранен в video_stream_difference_research.go
+            Оказалось, что бинарные данные между фреймами в файле от miio_record - это размер
+                found!
+                frame number:  3
+                frame length:  857
+                00000359
+                not frame space: 79129 - 79133
+                found!
+                frame number:  4
+                frame length:  695
+                000002b7
+                not frame space: 79990 - 79994
+                found!
+                frame number:  5
+                frame length:  803
+                00000323
+            frame length - в байтах
+            00000359 - кусок между фреймами. При переводе из hex в dec оказалось, что это 857. аналогично еще в трех примерах, которые я проверил.
+            Попробовал слепить аналогичным способом очищенные фреймы между собой и добавить к ним тупо байтовый блок, который идет в заводском файле перед началом фреймов - не получилось. Посмотрел на бинарный дамп более внимательно - увидел, что этот mp4 имеет упаковку и спереди и сзади какой-то служебной метаинфой.
+            В общем результат пока плохой - то, что я получаю с сокета является воспроизводимым видеофайлом, но у него отсутствует обертка и вероятно какая-то метаинфа, из-за чего видео сыпется артефактами. Файл записанный одновременно через miio_record воспроизводится без артефактов, имеет те же байтовые наборы кадров внутри, но в то же время имеет обертку, которую разбирать очень сложно в бинарном виде.
+        попробую посмотреть strace fetch_av
+            приложение многопоточное, придется отдельно разбирать трейсы потоков
+                817 - pic_thread
+                820 - video0
+                821 - video1
+                822 - fetch_audio (тред чтобы )
+                823 - play_audio (тред чтобы проигрывать звук с камеры)
+                824 - OSD (судя по трейсу - добавляет в изображение лого сяоми и таймкод)
+                797 - main тред программы.
+                819 - av_rpc
+            в логе при загрузке fetch_av писалось NEON ENABLED. По сисколам стало понятно, что до этого он проверяет какие features есть в процессоре. Оказалось, что neon - это набор мультимедиа инструкций для ARM.
+            почитал про неон на хабре https://habr.com/ru/articles/548698/, понял, что он ускоряет обработку примерно в 25 раз по сравнению с его отсутствием. Это может быть проблемой, если я захочу сам процессить сырой видеопоток.
+            в 797 видно, как в осносвном потоке открываются устройства из /dev, в том числе и /dev/mstar_ive0
+                open("/dev/mstar_ive0", O_RDWR)         = 13
+            а так же
+                open("/dev/mi_venc", O_RDWR)            = 10
+            в треде обработки видео видно только работу с 10 fd. Очевидно, все что делает этот поток на самом деле - получает кадры из venc и отдает их в сокет. Использования 13 fd не нашел нигде.
+            судя по тому, что мне удалось понять из strace, ниже - основной цикл получения тредом video0 видео от venc модуля
+                open("/run/video_mainstream/93", O_RDWR|O_CREAT|O_NONBLOCK|O_LARGEFILE|O_CLOEXEC, 0600) = 41
+                unlink("/run/video_mainstream/93")      = 0
+                _llseek(41, 262143, [262143], SEEK_SET) = 0
+                write(41, "\0", 1)                      = 1
+                mmap2(NULL, 262144, PROT_READ|PROT_WRITE, MAP_SHARED|0x4000000, 41, 0) = 0xb61d8000
+                ioctl(10, _IOC(_IOC_READ|_IOC_WRITE, 0x69, 0x08, 0x2c), 0xb63b0c08) = 0
+                ioctl(10, _IOC(_IOC_READ|_IOC_WRITE, 0x69, 0x42, 0x08), 0xb63b0a58) = 0
+                ioctl(10, _IOC(_IOC_READ|_IOC_WRITE, 0x69, 0x43, 0x08), 0xb63b0b10) = 0
+                ioctl(10, _IOC(_IOC_READ|_IOC_WRITE, 0x69, 0x46, 0x38), 0xb63b0af0) = 0
+                ioctl(10, _IOC(_IOC_READ|_IOC_WRITE, 0x69, 0x0b, 0x50), 0xb63b0ae0) = 0
+                ioctl(10, _IOC(_IOC_WRITE, 0x69, 0x49, 0x04), 0xb63b0be0) = 0
+                ioctl(10, _IOC(_IOC_WRITE, 0x69, 0x0c, 0x4c), 0xb63b0bd0) = 0
+                clock_gettime(CLOCK_MONOTONIC, {230497, 68998566}) = 0
+                munmap(0xb61d9000, 258048)              = 0
+                sendmsg(38, {msg_name(0)=NULL, msg_iov(2)=[{"\2\0\0\0", 4}, {"r\0\0\0\0\20\0\0", 8}], msg_controllen=16, [{cmsg_len=16, cmsg_level=SOL_SOCKET, cmsg_type=SCM_RIGHTS, [41]}], msg_flags=0}, MSG_EOR|MSG_NOSIGNAL) = 12
+                sendmsg(39, {msg_name(0)=NULL, msg_iov(2)=[{"\2\0\0\0", 4}, {"r\0\0\0\0\20\0\0", 8}], msg_controllen=16, [{cmsg_len=16, cmsg_level=SOL_SOCKET, cmsg_type=SCM_RIGHTS, [41]}], msg_flags=0}, MSG_EOR|MSG_NOSIGNAL) = 12
+                munmap(0xb61d8000, 4096)                = 0
+                close(41)                               = 0
+            если по-русски: создает fd 41, отражает 262144 байт в памяти под него, потом через ioctl к fd 10 (/dev/mi_venc) посылает команды модулю и он что-то делает с этой областью памяти, потом перестает отражать 258048 байт из выделенных ранее 262144, оставляет для отображения только первые 4096 байт, посылает их в sendmsg в сокет и закрывает 41 fd.
+            более подробный взгляд на работу с памятью в этом примере:
+                выделенная область в начале:                                0xb61d8000 - 0xb6218000 (размер 262144)
+                область, использующаяся для формирования сжатого кадра:     0xb61d8000 - 0xb61d9000 (размер 4096)
+                адреса, переданные ioctl все начинаются с 0xb63b, это явно за областью выделенной памяти
+            не понятно, зачем в таком случае выделяется большой участок памяти и что за адреса передаются в ioctl.
+            попробовал посмотреть, где используется rawstream - нашел только в 819 треде. Это тред который активно работает с mortox.
+                цикл работы с сокетом примерно такой же, как и в потоке video0, только ioctl использует 3 fd - это /dev/mi_sys
+                кажется, работы именно с видеопотоком там вообще нет.
+        попробую сделать шаг назад - скачал более свежий ffmpeg для armhf-32:
+            была версия 4.1 стала 4.1.1 (https://github.com/ffbinaries/ffbinaries-prebuilt/releases/tag/v4.4.1)
+            он вроде начинает декодировать видео, но падает в сигфолт.
+            strace показал, что падает из-за -1 ENOMEM (Out of memory)
+            стоит попробовать передавать на пк кадры и уже на месте их процессить.
+у меня опустились руки и какое-то время я не пытался продвигаться дальше.
+возможные точки опоры:
+        при проигрывании через mplayer в моменте когда возникают артефакты в логе плеера что-то активно проскакивает. Хорошо бы посмотреть, что.
+            те же ошибки, что в ffmpeg
+        нужно так же понять, что за ошибки сыпет ffmpeg
+            в логе повторяются постоянно одни и те же сообщения (extract_extradata @ 0x4daa40 не меняется)
+            [extract_extradata @ 0x4daa40] Invalid NAL unit 0, skipping.
+            [hevc @ 0x4db780] Invalid NAL unit 0, skipping.
+            [hevc @ 0x4db780] PPS id out of range: 0
+            [hevc @ 0x4db780] Error parsing NAL unit #0.
+            [hevc @ 0x4db780] Invalid NAL unit 0, skipping.
+            [hevc @ 0x4db780] PPS id out of range: 0
+        сравнить вывод ffmpeg -i с моего и нормального файла:
+            ffmpeg -i compared_part_my_own_binary.mp4 -f h264 -c:v copy -f mpegts -y test_my.mpegts 2>/tmp/222
+            ffmpeg -i compared_part_miio_record.mp4 -f h264 -c:v copy -f mpegts  -y test_miio.mpegts 2>/tmp/333
+                бинарно не вижу совпадающих кусков в файлах. Судя по всему, указанный -c:v copy вовсе не означает, что контейнер видеострима останется неизменным внутри файла.
+                все что видно в этих логах на самом деле - в полноценном файле задан duration и битрейт, и так же ожидаемо, ffmpeg сначала показывает элемент более высокого уровня - инпут
+                    222: Input #0, hevc, from 'compared_part_my_own_binary.mp4'
+                        Stream #0:0: Video: hevc (Main), yuv420p(tv), 2304x1296, q=2-31, 20.75 fps, 20 tbr, 90k tbn, 1200k tbc
+                    333: Input #0, mov,mp4,m4a,3gp,3g2,mj2, from 'compared_part_miio_record.mp4'
+                        Stream #0:1(und): Video: hevc (Main) (hvc1 / 0x31637668), yuv420p(tv), 2304x1296, 352 kb/s, 20 fps, 20 tbr, 90k tbn, 20 tbc (default)
+        попробовал обратиться за помощью к chatgpt:
+            описал ему ситуацию и спросил, откуда могут взяться артефакты. В диалоге пришли к выводу, что роляет грубая конкатенация.
+            Он посоветовал мне разделить поток снова на отдельные файлы по фреймам и объединить их через
+                ffmpeg  -f concat -i concat.txt -c copy  out.hevc
+                (concat.txt - просто список файлов которые надо конкатеринировать)
+                не вышло потому что возникает пара ошибок, но какая из них все руинит - неизвестно
+                    Impossible to open '9.hevc'
+                    dimensions not set
+                как чинить обе - не понятно, гугл ничего путного не дал. Ясно только, что если используешь -c copy - то ты не сможешь задать dimension.
+            Тем не менее, кое-что потенциально полезное из него я вытащить смог:
+                To correctly concatenate HEVC frames, you need to ensure that you concatenate the frames at the NAL unit level. In HEVC, frames are divided into Network Abstraction Layer (NAL) units, which are self-contained units of the bitstream.
+            Он намекнул мне, что корректный фрейм - это корректный NAL. Надо погуглить формат этого NAL и проверить мои фреймы на корректность, потому что одна из ошибок ffmpeg:
+                [hevc @ 0x1f13940] Invalid NAL unit 0, skipping.
+                [hevc @ 0x1f13940] Error parsing NAL unit #0.
+        окей. попробуем проанализировать один кадр и понять, почему ffmpeg ругается на NAL unit
+            наткнулся на спецификацию NAL юнитов: https://qna.habr.com/q/622355
+            таблицы сохранены в директорию "спека по NAL unit"
+            так же статья на вики: https://en.wikipedia.org/wiki/Network_Abstraction_Layer
+            попробовал повысить уровень лога в ffmpeg:
+                ffmpeg -i compared_part_my_own_binary.mp4 -v debug
+                ничего путного оттуда не вычитал. Причина, почему NAL инвалид не указывается.
+            сделал strace miio_record заново, но с указанием -f ключа
+                обнаружил, что оказывается помимо основного треда, который получает данные из сокета существует дополнительный тред, который пишет временный файл и его ротирует.
+                присмотрелся к его сисколлам - увидел writev сисколл. Погуглил его.
+                Выяснил, что оказывается iovec - это описание вектора(ов). Звучит разумно, потому что изменение картинки регулируется именно вектором.
+            читал вики, наткнулся на расшифровку аббревиатуры PPS
+                picture parameter sets
+                это относится к сообщению, которое выдает ffmpeg: PPS id out of range: 0
+                из статьи на вики перешел в спеку в виде огромного pdf: https://www.itu.int/rec/dologin_pub.asp?lang=e&id=T-REC-H.264-202108-I!!PDF-E&type=items
+                пытаться по нему исправить NAL выглядит непосильной задачей.
+        решил попробовать найти, какой именно бинарь из mii семейства отправляет потоковое видео на сервера сяоми.
+            это теоретически может помочь потому что проблема у меня именно в том, что я не знаю, как превратить набор векторных изменений картинки (hevc стрим) в адекватное не битое потоковое видео ts формата.
+            Судя по тому, как работает mi home приложение в телефоне - там именно ts стрим, потому что задержка видео от камеры до телефона буквально изменяется единицами милисекунд.
+            Попеременным убийством разных процессов пришел к тому, что скорее всего транслирует видео на сервера приложение miio_miss, потому что только при его убийстве трансляция в телефоне сразу прервалась.  убийство miio_agent и miio_client не прекращает трансляцию.
+            попробовал снять strace.
+                тред размер         PR_SET_NAME                     просмотрен и описание того, что удалось понять
+                1710 299675 байт                                    +
+                1717                av_rpc_miio_stre                +
+                1718 333694 байт    av_fetchstream\0\0              + <-- вот тут открываются сокеты и идет цикл recvmsg-mmap2-munmap
+                1728                                                +
+                1729                                                +
+                1730                                                +
+                1731 510691 байт                                    + <-- тут в сокет который слушается и к которому подключен телефон шлется зашифрованный трафик через сисколл sendto
+                1732                                                + <-- тут из сокета который слушается (и к которому в том числе подключен телефон) получается зашифрованный трафик через сисколл recvfrom
+                1733                                                +
+                1734                                                +
+                1735                                                +
+                1736                                                +
+                1737                                                +
+                1738                                                +
+                1749                miss_listen\0%s:%               +
+                1750                miss_login\0\0CS2:              +
+                1763 101707 байт    command_1\0\0\0\0\0\0\0         +
+                1764                avsend_1\0\0\0\0\0\0\0\0        +
+                1765                audio_1\0\0\0\0\0\0\0\0\0       +
+                1766                rdt_1\0\0\0\0\0\0\0\0\0\0\0     +
+            6 fd - video_mainstream
+            судя по трассировке - видеопоток пересылается напрямую на адерс телефона в олкальной сети, а не тянется откуда-то с сервера извне (в этой трассировке адрес телефона - 192.168.1.71)
+            где встречается 192.168.1.71: 1732, 1731, 1749
+                1749 - только один сисколл - запись в лог, что происходит коннект с телефоном
+            я надеялся, что где-то найду, как изменяется и шифруется значение полученное из recvmsg, но ничего не нашел.
+        попробовал вернуться к парсингу того, что мы получаем через сокет
+            ранее я уже пробовал очистить от нулей в конце кадр и конкатенировать кадры, проставив перед кадрами изх размер (точно такая же байтовая конструкция, которая есть в compared_part_miio_record)
+            в тот раз на выходе получался неопознаваемый ffmpeg файл, при попытке скормить его ему возникала ошибка
+                [mov,mp4,m4a,3gp,3g2,mj2 @ 0x5bfa80] Format mov,mp4,m4a,3gp,3g2,mj2 detected only with low score of 1, misdetection possible!
+                [mov,mp4,m4a,3gp,3g2,mj2 @ 0x5bfa80] moov atom not found
+            тут мы видим, распознающая файлы функция ffmpeg (в дебаге виденн её запуск) со скором = 1 (compared_part_my_own_binary имеет скор детекта 51) детектит предположительно mp4, видимо исходя только из расширения файла.
+            и не найден moov atom. Стоит погуглить, что это такое и где оно в хидере.
+            Какое-то время разбираю и сравниваю байтовое содержимое файлов с потоком сокета, записанных в разное время.
+            Гонял разные проверки, результаты сбора сохранены в комментарии внутри analyze_socketvideo_frameheaders.go.
+            В ходе проверок искал, где мождет быть moov atom и дошел до того, что начал заменять неизменяемые байтовые блоки случайными значениями - выяснилось, что это вообще ни на что не влияет. Я попробовал заменить все 100 значений хидера на нули - это вызвало привычную ошибку отсутствующего moov atom. При этом замена 99 байт на 0 файл не повредила.
+            Вывод - хидер на самом деле не 100, а 99 байт и он не несет никакой функции в проигрывании видео через ffplay. Возможно при корректном форматировании данных из сокета хидер становится полезным, но кажется что нет.
+            Попробовал заменить 100 байтов хидера на 00 00 00....00 00 03 (чтобы хидер так же последним битом кончался на 1, но не 01 а 03) - moov atom не найден. Попробовал так же заменить только чтобы на конце была 02 - то же самое. Пробовал подставлять разные битовые сочетания 101, 1001, 1001 - так же не находит moov atom. Вывод - ffmpeg для распознания обязательно нужна именно полный байт hex 01 в начале перед фреймом (ну или чтобы фрейм начинался с hex 01).
+
+            В одной из попыток что-то выжать из гугла я ввожу в поиск "how vectors coding hevc" и вижу интересный результат, подсвеченный им
+            >In HEVC, the result of motion vector prediction for each block being encoded or decoded is a list of two motion vectors.
+            ссылка ведет на судя по всему, более-менее человеческое описание кодирования/декодирования hevc https://www.elecard.com/page/motion_compensation_in_hevc
+            Так же всплыло в памяти, что ранее я натыкался на сисколл writev, который по непонятной мне причине слал не по одному кадру, полученному из сокета, а по два вместе.
+            Кажется проблема действительно может быть в том, что у меня в видео теряется (или не обозначается должным образом) один из векторов движения.
+
+            кстати есть предположение, что возможно полезный пейлоад в 4096 размере может не ограничиваться и переходить на следующий кадр. Если нолей например в стриппед фрейме нет.
+
+        присмотрелся к writev из strace.
+            Ранее я видел какой-то добавляемый префикс в байтовых кусках, которые пересылались им и думал, что это по аналогии с содержимым mp4 образцового файла это размер кадра, но что-то не сходится этот размер заданный hex с размером, который стоит после сообщения в dec.
+            Нашел пару примеров, которые показывают, что размер указанный вторым аргументом после пейлоада не совпадает с первыми 4 байтами, переведенными в dec. Я так же учитывал, что чтение этих данных может идти не побайтово, а побитово и бит единица перед куском \2\1\320\ пробовал вычитать из предстоящего значения.
+                {"\0\0\1\344    \2\1\320\0\315\304\f`\376A\377\17\324\2114\326\"m}@u.\367\266\3059\217b"..., 1102}          =      00 00 01 E4   02 01 D0 00 ..... ;  00 00 01 E4 = 484,  1102 - 484 = 618
+                {"\0\0\1\326    \2\1\320\1-\304\f`\376A\377\17\324\200\0\222\202\353G\3 \377\360n\245\r\202\2"..., 1137}    =      00 00 01 D6   02 01 D0 01 ..... ;  00 00 01 D6 = 470,  1137 - 470 = 667
+
+                {"\0\0\1\332    \2\1\320\0u\304\n`\375\3403=j\200RF\\2\n\311\21\300\26\225\256\37\316'"..., 1074}           =      00 00 01 DA   02 01 D0 00 ..... ;  00 00 01 DA = 474,  1074 - 474 = 600
+                {"\0\0\2c      \2\1\320\0\r\304\n`\302N\177M\247\370\242\314\254\312\t\201%\342\325\247\33\223c!"..., 1075} =      00 00 02 63   02 01 D0 00 ..... ;  00 00 02 63 = 611,  1075 - 611 = 464
+            попробую разобрать сообщение из полного strace
+            взял сообщение
+                1861  writev(13, [{"\0\0\1=\2\1\320\0\25...<много байт>...350\350\202Lh\302\333BQ;\300", 1102}], 2) = 4180
+                1 элемент
+                        \0\0\1=\2\1\320\0     --> hex 00 00 01 3D... --> dec 317 --> bin 01.00111101 <-- оканчивается на 1
+                        \0\0\1\"\2\1\320\0    --> hex 00 00 01 22... --> dec 290 --> bin 01.00100010 <-- НЕ оканчивается на 1
+                        \0\0\1\36\2\1\320\0   --> hex 00 00 01 1E... --> dec 286 --> bin 01.00011110 <-- НЕ оканчивается на 1
+                        \0\0\3;\2\1\320\0     --> hex 00 00 03 3B... --> dec 827 --> bin 11.00111011 <-- оканчивается на 1
+                        \0\0\3\37\2\1\320\0   --> hex 00 00 03 1F... --> dec 799 --> bin 11.00011111 <-- оканчивается на 1
+                        \0\0\2\27\2\1\320\0   --> hex 00 00 02 17... --> dec 535 --> bin 10.00010111 <-- оканчивается на 1
+                        тут проверил только по сумме указанных размеров фреймов. 317 + 290 + 286 + 827 + 799 + 535 + 6*4 = 3078. Соответствует размеру, указанному в конце элемента.
+                2 элемент
+                        \0\0\2E\2\1\320\0     --> hex 00 00 02 45... --> dec 581 --> bin 10.01000101 <-- оканчивается на 1
+                        \0\0\2\1\2\1\320\0    --> hex 00 00 02 01... --> dec 513 --> bin 10.00000001 <-- оканчивается на 1
+                        глазами посчитал количество байтов соответствующее указанной длине, во втором элементе все сошлось. В нем два кадра, один 581 байт, второй 513 и плюс еще по 4 байта с каждого из блока размера = 1102 байт, как и заявлено в writev
+            результаты парсинга глазами вызывают два вопроса:
+                - если каждый из двух элементов, передаваемых writev все равно состоит из нескольких кадров - зачем вообще разбивать эти кадры на два элемента, а не впихнуть все в один?
+                - в 1 элементе есть кадры, размеры которых оканчиваются битово не на 1. Это не сходится с тем, что я выяснил ранее, о том что moov atom начинается именно с этого бита равного 1.
+        попробую понять, почему некоторым кадрам позволено начинаться с 0:
+            нашел актуальную рекомендацию по формату h265 https://www.itu.int/rec/dologin_pub.asp?lang=e&id=T-REC-H.265-202108-I!!PDF-E&type=items
+            в разделе "7.1 Method of specifying syntax in tabular form" описано, как интерпретировать значения из таблицы nal_unit
+
+                nal_unit_header():      в сумме занимает два байта
+                    forbidden_zero_bit: должен быть всегда равен 0, занимает 1 бит
+                    nal_unit_type:  int, описываемый 6 битами
+                        определяет тип структуры данных RBSP, содержащейся в NAL юните
+                        разные типы по интам описаны в таблице в спецификации "Table 7-1 – NAL unit type codes and NAL unit type classes"
+                    nuh_layer_id:  int, описываемый 6 битами
+                        определяет id слоя, к которому принадлежит VCL NAL юнит/к которому применяется не-VCL NAL юнит
+                        значение инта должно быть в промежутке от 0 до 62 включительно.  Значение 63 не используется, согласно спеке 21 года.
+                        если nal_unit_type = EOB_NUT (End of bitstream, значение инта 37), то должен быть равен 0
+                        значение nuh_layer_id должно быть одинаковым для всех VCL NAL юнитов кодируемой картинки (тут не понятно с английского - имеется в виду видео целиком или один кадр из видео).
+                    nuh_temporal_id_plus1: int, описываемый 3 битами
+                        определяет переменную TemporalId как nuh_temporal_id_plus1 - 1. Не очень понятно, зачем.
+                        когда nal_unit_type в промежутке от BLA_W_LP до RSV_IRAP_VCL23 (интами от 16 до 23) включительно, TemporalId должна быть равна 0
+                        когда nal_unit_type равен TSA_R или TSA_N (интами 2 или 3) - TemporalId не должна быть равна 0
+                        когда nuh_layer_id равен 0 и nal_unit_type равен STSA_R или STSA_N (интами 4 или 5) - TemporalId не должна быть равна 0
+                        так же в пдф есть еще условия для не-VCL юнитов, пока не буду их переписывать
+
+                при проигрывании сокетфайла через ffplay возникает ошибка
+                    [hevc @ 0x7fc83409b8c0] The cu_qp_delta -53 is outside the valid range [-26, 25].
+                поискал по документу рекомендаций cu_qp_delta - нашел вот что
+                    It is a requirement of bitstream conformance that the value of CuQpDeltaVal shall be in the range of −( 26 + QpBdOffsetY / 2 ) to +( 25 + QpBdOffsetY / 2 ), inclusive
+                    в моем случае значение -53 не нравится, потому что выходит за границы допустимого промежутка.
+                        то есть 26 + QpBdOffsetY / 2 = 26
+                                QpBdOffsetY / 2 = 0
+                                QpBdOffsetY = 0
+                    вероятно проблема исходит из того, что QpBdOffsetY вычисляется как 0, хотя должен быть минимум 54
+                    далее по поиску QpBdOffsetY нашел
+                        QpBdOffsetY = 6 * bit_depth_luma_minus8
+                    54 как раз кратен 6, что говорит о том, что bit_depth_luma_minus8 должно быть минимум 9.
+                    Кажется bit_depth_luma_minus8 - это один из параметров структуры байтстрима RBSP.
+                    Да вот только есть проблема. В документе стандартов есть описание граничных значений этого параметра и оно не поднимается выше 6.
+                    Тупик.
+                    Кажется я приближаюсь к тому, чтобы начать разбирать сорцы ffmpeg и пересобирать его, чтобы дебажить парсинг NAL юнита.
+
+                решил попробовать сравнить дебаги ffmpeg
+                    miio_binary:    [mov,mp4,m4a,3gp,3g2,mj2 @ 0x7f6e20000c80] Format mov,mp4,m4a,3gp,3g2,mj2 probed with size=2048 and score=100
+                                    [hevc @ 0x7f6e20004840] nal_unit_type: 32(VPS), nuh_layer_id: 0, temporal_id: 0
+                                    [hevc @ 0x7f6e20004840] Decoding VPS
+                                    [hevc @ 0x7f6e20004840] nal_unit_type: 33(SPS), nuh_layer_id: 0, temporal_id: 0
+                                    [hevc @ 0x7f6e20004840] Decoding SPS
+                                    [hevc @ 0x7f6e20004840] Decoding VUI
+                                    [hevc @ 0x7f6e20004840] nal_unit_type: 34(PPS), nuh_layer_id: 0, temporal_id: 0
+                                    [hevc @ 0x7f6e20004840] Decoding PPS
+                                    Stream #0:1(und), 18, 1/90000: Video: hevc (Main), 1 reference frame (hvc1 / 0x31637668), yuv420p(tv, left), 2304x1296, 0/1, 352 kb/s, 20 fps, 20 tbr, 90k tbn, 20 tbc (default)
+                                    [hevc @ 0x7f6e2003c080] nal_unit_type: 32(VPS), nuh_layer_id: 0, temporal_id: 0
+                                    [hevc @ 0x7f6e2003c080] Decoding VPS
+                                    [hevc @ 0x7f6e2003c080] nal_unit_type: 33(SPS), nuh_layer_id: 0, temporal_id: 0
+                                    [hevc @ 0x7f6e2003c080] Decoding SPS
+                                    [hevc @ 0x7f6e2003c080] Decoding VUI
+                                    [hevc @ 0x7f6e2003c080] nal_unit_type: 34(PPS), nuh_layer_id: 0, temporal_id: 0
+                                    [hevc @ 0x7f6e2003c080] Decoding PPS
+                                    [hevc @ 0x7f6e2003c080] nal_unit_type: 19(IDR_W_RADL), nuh_layer_id: 0, temporal_id: 0
+                                    [hevc @ 0x7f6e2003c080] Format yuv420p chosen by get_format().
+                                    [hevc @ 0x7f6e2003c080] Output frame with POC 0.
+                                    [hevc @ 0x7f6e2003c080] Decoded frame with POC 0.
+                                    [hevc @ 0x7f6e2005ce40] nal_unit_type: 1(TRAIL_R), nuh_layer_id: 0, temporal_id: 0
+                                    [hevc @ 0x7f6e2005ce40] Output frame with POC 1.
+                                    [hevc @ 0x7f6e2005ce40] Decoded frame with POC 1.
+                                    [hevc @ 0x7f6e2006d700] nal_unit_type: 1(TRAIL_R), nuh_layer_id: 0, temporal_id: 0
+                                    [hevc @ 0x7f6e2006d700] Output frame with POC 2.
+                                    [hevc @ 0x7f6e2006d700] Decoded frame with POC 2.
+                                    Video frame changed from size:0x0 format:none serial:-1 to size:2304x1296 format:yuv420p serial:1
+                                    параллельно продолжается цикл nal_unit_type-outputframe-decodedframe пока не доходит до POC 59
+                                    [hevc @ 0x7f6e200c0640] nal_unit_type: 1(TRAIL_R), nuh_layer_id: 0, temporal_id: 0
+                                    [hevc @ 0x7f6e200c0640] Output frame with POC 59.
+                                    [hevc @ 0x7f6e200c0640] Decoded frame with POC 59.
+                                    [hevc @ 0x7f6e200d0f80] nal_unit_type: 19(IDR_W_RADL), nuh_layer_id: 0, temporal_id: 0
+                                    [hevc @ 0x7f6e200d0f80] Output frame with POC 0.
+                                    [hevc @ 0x7f6e200d0f80] Decoded frame with POC 0.
+                                    [hevc @ 0x7f6e200e1900] nal_unit_type: 1(TRAIL_R), nuh_layer_id: 0, temporal_id: 0
+                                    [hevc @ 0x7f6e200e1900] Output frame with POC 1.
+                                    [hevc @ 0x7f6e200e1900] Decoded frame with POC 1.
+                                    более ничего нового не происходит - повторется цикл с IDR_W_RADL на POC 0 и TRAIL_R на POC 1-59
+
+                    my_binary:      [hevc @ 0x7fe960000c80] Format hevc probed with size=131072 and score=51
+                                    много повторов:
+                                        [hevc @ 0x7fe960002b00] Invalid NAL unit 0, skipping.
+                                        [hevc @ 0x7fe960002b00] nal_unit_type: 1(TRAIL_R), nuh_layer_id: 0, temporal_id: 0
+                                        [hevc @ 0x7fe960002b00] Invalid NAL unit 0, skipping.
+                                        [hevc @ 0x7fe960002b00] PPS id out of range: 0
+                                    [hevc @ 0x7fe960002b00] nal_unit_type: 32(VPS), nuh_layer_id: 0, temporal_id: 0
+                                    [hevc @ 0x7fe960002b00] nal_unit_type: 33(SPS), nuh_layer_id: 0, temporal_id: 0
+                                    [hevc @ 0x7fe960002b00] nal_unit_type: 34(PPS), nuh_layer_id: 0, temporal_id: 0
+                                    [hevc @ 0x7fe960002b00] nal_unit_type: 19(IDR_W_RADL), nuh_layer_id: 0, temporal_id: 0
+                                    [hevc @ 0x7fe960002b00] Invalid NAL unit 0, skipping.
+                                    [hevc @ 0x7fe960002b00] Decoding VPS
+                                    [hevc @ 0x7fe960002b00] Main profile bitstream
+                                    [hevc @ 0x7fe960002b00] Decoding SPS
+                                    [hevc @ 0x7fe960002b00] Main profile bitstream
+                                    [hevc @ 0x7fe960002b00] Decoding VUI
+                                    [hevc @ 0x7fe960002b00] Decoding PPS
+                                    [hevc @ 0x7fe960002b00] Format yuv420p chosen by get_format().
+                                    [hevc @ 0x7fe960002b00] Output frame with POC 0.
+                                    [hevc @ 0x7fe960002b00] Decoded frame with POC 0.
+                                    много повторов:
+                                        [hevc @ 0x7fe960002b00] nal_unit_type: 1(TRAIL_R), nuh_layer_id: 0, temporal_id: 0
+                                        [hevc @ 0x7fe960002b00] Invalid NAL unit 0, skipping.
+                                    Stream #0:0, 106, 1/1200000: Video: hevc (Main), 1 reference frame, yuv420p(tv, left), 2304x1296, 0/1, 20.75 fps, 20 tbr, 1200k tbn, 20 tbc
+                                    [hevc @ 0x7fe960034380] nal_unit_type: 32(VPS), nuh_layer_id: 0, temporal_id: 0
+                                    [hevc @ 0x7fe960034380] nal_unit_type: 33(SPS), nuh_layer_id: 0, temporal_id: 0
+                                    [hevc @ 0x7fe960034380] nal_unit_type: 34(PPS), nuh_layer_id: 0, temporal_id: 0
+                                    [hevc @ 0x7fe960034380] Decoding VPS
+                                    [hevc @ 0x7fe960034380] Decoding SPS
+                                    [hevc @ 0x7fe960034380] Decoding VUI
+                                    [hevc @ 0x7fe960034380] Decoding PPS
+                                    [hevc @ 0x7fe960034380] Format yuv420p chosen by get_format().
+                                    [hevc @ 0x7fe960034380] Could not find ref with POC 38
+                                    [hevc @ 0x7fe960034380] Output frame with POC 39.
+                                    [hevc @ 0x7fe96003b580] nal_unit_type: 1(TRAIL_R), nuh_layer_id: 0, temporal_id: 0
+                                    [hevc @ 0x7fe96003b580] Invalid NAL unit 0, skipping.
+                                    [hevc @ 0x7fe96003b580] Output frame with POC 40.
+                                    далее продолжает успешно распознавать и декодировать фреймы, адрес памяти растет
+                                    Video frame changed from size:0x0 format:none serial:-1 to size:2304x1296 format:yuv420p serial:1
+                                    [hevc @ 0x7fe9600d4a80] nal_unit_type: 1(TRAIL_R), nuh_layer_id: 0, temporal_id: 0
+                                    [hevc @ 0x7fe9600d4a80] Invalid NAL unit 0, skipping.
+                                    [hevc @ 0x7fe9600d4a80] Output frame with POC 59.
+                                    [hevc @ 0x7fe9600d4a80] Decoded frame with POC 59.
+                                    [hevc @ 0x7fe9600e52c0] nal_unit_type: 32(VPS), nuh_layer_id: 0, temporal_id: 0
+                                    [hevc @ 0x7fe9600e52c0] nal_unit_type: 33(SPS), nuh_layer_id: 0, temporal_id: 0
+                                    [hevc @ 0x7fe9600e52c0] nal_unit_type: 34(PPS), nuh_layer_id: 0, temporal_id: 0
+                                    [hevc @ 0x7fe9600e52c0] nal_unit_type: 19(IDR_W_RADL), nuh_layer_id: 0, temporal_id: 0
+                                    [hevc @ 0x7fe9600e52c0] Invalid NAL unit 0, skipping.
+                                    [hevc @ 0x7fe9600e52c0] Decoding VPS
+                                    [hevc @ 0x7fe9600e52c0] Decoding SPS
+                                    [hevc @ 0x7fe9600e52c0] Decoding VUI
+                                    [hevc @ 0x7fe9600e52c0] Decoding PPS
+                                    [hevc @ 0x7fe9600e52c0] Output frame with POC 0.
+                                    [hevc @ 0x7fe9600e52c0] Decoded frame with POC 0.
+                                    далее аналогичный цикл с успешным распознаванием и указанием, что Invalid NAL unit 0, skipping.
+                                    заметил, что попадается nal unit с набором VPS SPS VUI PPS IDR_W_RADL, который декодится как POC 34 (не 0!)
+                основные отличия - в результатах моего бинаря есть сообщение на каждом из фреймов "Invalid NAL unit 0, skipping". Так же тот тип nal юнита, который должен быть с POC 0 (IDR_W_RADL) почему-то принимает порядковые номера отличные от 0.
+
+                mii: Stream #0:1(und), 18,  1/90000:   Video: hevc (Main), 1 reference frame (hvc1 / 0x31637668), yuv420p(tv, left), 2304x1296, 0/1, 352 kb/s, 20 fps,    20 tbr, 90k tbn,   20 tbc (default)
+                my:  Stream #0:0,      106, 1/1200000: Video: hevc (Main), 1 reference frame,                     yuv420p(tv, left), 2304x1296, 0/1,           20.75 fps, 20 tbr, 1200k tbn, 20 tbc
+
+                попробовал перепаковать сокетфайл с указанием tbn 90к. Это не помогло.
+
+            поговорил с коллегой, опытным в вопросах низкоуровневого программирования, он посмотрел сравниваемые файлы и нашел, что в образце есть фреймы, которые имеют длину намного больше, чем 4096. Причем в моем сокетфайле первые 4096 байт есть, а дальше - отсутствуют!
+            Он указал мне что размер задает слайс байтов [8:10] из хидера пакета. Когда я спросил его - а как ты понял, что это именно размер? Он ответил, что распознал просто на глаз. Вот что значит опыт.
+            один из примеров:
+                miio_record: кадр размером 0x1493 = 5267 байт. У меня в сокетфайле только первые 4096.
+            переписал получение данных с юникс сокета так, чтобы ничего не терялось. Дальше все пошло очень гладко.
+            Написал сервер для получения видеопотока на стороне пк и переделал бинарь на го так, чтобы посылал кадры в указанный адрес.
+            Все работает. По умолчанию ffplay делает задержку видим она буферизацию. Отключается парой опций, приведенных ниже.
+            server выдает бинарный поток прямо в stdout, а ffplay его оттуда ловит и проигрывает с минимальной задержкой.
+                ./server | ffplay -fflags nobuffer -flags low_delay  -f hevc -i pipe:0
+            осталось переделать на устройство в /dev/, проверить, что я пишу именно нужный кусок (вопрос с размером хидера) и посмотреть, откуда все-таки сообщения о инвалидном нал юните в ffplay.
+                переделать на устройство в /dev/:
+                    чтобы завернуть кадры в виртуальную камеру устанавливаю v4l2loopback (для слаквари описывать процесс не буду)
+                    потом чтобы модпроб нашел новый модуль делаем depmod -a
+                    ну и немного изменяем ffmpeg аргументы, чтобы он писал поток в новопоявившийся /dev/video0
+                        ./server | ffmpeg -fflags nobuffer -flags low_delay  -f hevc -i pipe:0 -map 0:v -f v4l2 /dev/video0
+                посмотреть, откуда все-таки сообщения о инвалидном нал юните в ffplay:
+                    сообщения наблюдались при выкидывании первых 64 байт хиденра пакета.
+                    путем подбора выяснил, что достаточно выкинуть 96 первых байт из хидера чтобы ffmpeg перестал ругаться постоянно сообщениями о NAL юните. Если выкидывать 98 байт - картинка очень сильно портится и постоянно появляются вот такие ошибки:
+                        [NULL @ 0xc83a40] VPS 0 does not exist
+                        [NULL @ 0xc83a40] SPS 0 does not exist.
+                        [NULL @ 0xc83a40] PPS id out of range: 0
+                        [hevc @ 0xc84840] VPS 0 does not exist
+                        [hevc @ 0xc84840] SPS 0 does not exist.
+                        [hevc @ 0xc84840] PPS id out of range: 0
+            Осталось только причесать и оформить по-человечески в гитхабе.

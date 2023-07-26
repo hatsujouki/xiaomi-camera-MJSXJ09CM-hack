@@ -1,0 +1,264 @@
+set_robust_list(0xb65b751c, 12)         = 0
+prctl(PR_SET_NAME, "miss_listen\0%s:%") = 0
+gettimeofday({1689622801, 998538}, NULL) = 0
+open("/etc/TZ", O_RDONLY)               = -1 ENOENT (No such file or directory)
+open("/etc/localtime", O_RDONLY)        = 15
+read(15, "TZif2\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\21\0\0\0\21\0\0\0\0\0\0\0N\0\0\0\21\0\0\0&\200\0\0\0\233_\36\307\235>\362y\236*\356\371\236\3679i\237\204W\371", 68) = 68
+lseek(15, -68, SEEK_END)                = 1476
+read(15, "\0MDST\0MSD\0MSK\0+05\0EET\0EEST\0\0\0\0\0\0\1\0\0\0\0\1\1\1\1\1\1\1\0\0\0\0\0\1\0\0\0\0\0\0\0\0\0\0\0\nMSK-3\n", 68) = 68
+close(15)                               = 0
+write(1, "[2023-07-17 22:40:01 D] server listen did: XMSYRU-161335-ZYXWU, license: HLFHWC:XVCRFGZ\n", 88) = 88
+gettimeofday({1689622802, 306}, NULL)   = 0
+gettimeofday({1689622802, 393}, NULL)   = 0
+gettimeofday({1689622802, 449}, NULL)   = 0
+socket(PF_INET, SOCK_DGRAM, IPPROTO_IP) = 15
+setsockopt(15, SOL_SOCKET, SO_BROADCAST, [1], 4) = 0
+gettimeofday({1689622802, 1954}, NULL)  = 0
+bind(15, {sa_family=AF_INET, sin_port=htons(29960), sin_addr=inet_addr("0.0.0.0")}, 16) = 0
+open("/etc/hosts", O_RDONLY)            = 16
+ioctl(16, TCGETS, 0xb65b66c8)           = -1 ENOTTY (Not a tty)
+read(16, "127.0.0.1\tlocalhost\n127.0.1.1\tmijia_camera\n", 4096) = 43
+read(16, "", 4096)                      = 0
+close(16)                               = 0
+open("/etc/hosts", O_RDONLY)            = 16
+ioctl(16, TCGETS, 0xb65b66c8)           = -1 ENOTTY (Not a tty)
+read(16, "127.0.0.1\tlocalhost\n127.0.1.1\tmijia_camera\n", 4096) = 43
+read(16, "", 4096)                      = 0
+close(16)                               = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+sendto(15, "\361\0\0\0", 4, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.68")}, 16) = 4
+sendto(15, "\361\0\0\0", 4, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.186")}, 16) = 4
+sendto(15, "\361\0\0\0", 4, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.216")}, 16) = 4
+sendto(15, "\361\22\0,0\177\225W\16A\346\304\10<\n\27\320\205\262\247\255z\4\n\256\0U\36\326\272(\17 {\3768\332&\314\n\204\200BRK\277\307~", 48, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.68")}, 16) = 48
+sendto(15, "\361\22\0,0\177\225W\16A\346\304\10<\n\27\320\205\262\247\255z\4\n\256\0U\36\326\272(\17 {\3768\332&\314\n\204\200BRK\277\307~", 48, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.186")}, 16) = 48
+sendto(15, "\361\22\0,0\177\225W\16A\346\304\10<\n\27\320\205\262\247\255z\4\n\256\0U\36\326\272(\17 {\3768\332&\314\n\204\200BRK\277\307~", 48, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.216")}, 16) = 48
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+sendto(15, "\361\22\0,0\177\225W\16A\346\304\10<\n\27\320\205\262\247\255z\4\n\256\0U\36\326\272(\17 {\3768\332&\314\n\204\200BRK\277\307~", 48, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.68")}, 16) = 48
+sendto(15, "\361\22\0,0\177\225W\16A\346\304\10<\n\27\320\205\262\247\255z\4\n\256\0U\36\326\272(\17 {\3768\332&\314\n\204\200BRK\277\307~", 48, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.186")}, 16) = 48
+sendto(15, "\361\22\0,0\177\225W\16A\346\304\10<\n\27\320\205\262\247\255z\4\n\256\0U\36\326\272(\17 {\3768\332&\314\n\204\200BRK\277\307~", 48, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.216")}, 16) = 48
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+gettimeofday({1689622803, 168764}, NULL) = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+gettimeofday({1689622803, 197096}, NULL) = 0
+gettimeofday({1689622803, 197499}, NULL) = 0
+open("/etc/TZ", O_RDONLY)               = -1 ENOENT (No such file or directory)
+open("/etc/localtime", O_RDONLY)        = 16
+read(16, "TZif2\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\21\0\0\0\21\0\0\0\0\0\0\0N\0\0\0\21\0\0\0&\200\0\0\0\233_\36\307\235>\362y\236*\356\371\236\3679i\237\204W\371", 68) = 68
+lseek(16, -68, SEEK_END)                = 1476
+read(16, "\0MDST\0MSD\0MSK\0+05\0EET\0EEST\0\0\0\0\0\0\1\0\0\0\0\1\1\1\1\1\1\1\0\0\0\0\0\1\0\0\0\0\0\0\0\0\0\0\0\nMSK-3\n", 68) = 68
+close(16)                               = 0
+write(1, "[2023-07-17 22:40:03 I] New session(1) 192.168.1.71:14383 connectting.\n", 71) = 71
+gettimeofday({1689622803, 199205}, NULL) = 0
+open("/etc/TZ", O_RDONLY)               = -1 ENOENT (No such file or directory)
+open("/etc/localtime", O_RDONLY)        = 16
+read(16, "TZif2\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\21\0\0\0\21\0\0\0\0\0\0\0N\0\0\0\21\0\0\0&\200\0\0\0\233_\36\307\235>\362y\236*\356\371\236\3679i\237\204W\371", 68) = 68
+lseek(16, -68, SEEK_END)                = 1476
+read(16, "\0MDST\0MSD\0MSK\0+05\0EET\0EEST\0\0\0\0\0\0\1\0\0\0\0\1\1\1\1\1\1\1\0\0\0\0\0\1\0\0\0\0\0\0\0\0\0\0\0\nMSK-3\n", 68) = 68
+close(16)                               = 0
+write(1, "[2023-07-17 22:40:03 I] CS2 my local ip: 192.168.1.70, my local ip: 29960\n", 74) = 74
+gettimeofday({1689622803, 202533}, NULL) = 0
+open("/etc/TZ", O_RDONLY)               = -1 ENOENT (No such file or directory)
+open("/etc/localtime", O_RDONLY)        = 16
+read(16, "TZif2\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\21\0\0\0\21\0\0\0\0\0\0\0N\0\0\0\21\0\0\0&\200\0\0\0\233_\36\307\235>\362y\236*\356\371\236\3679i\237\204W\371", 68) = 68
+lseek(16, -68, SEEK_END)                = 1476
+read(16, "\0MDST\0MSD\0MSK\0+05\0EET\0EEST\0\0\0\0\0\0\1\0\0\0\0\1\1\1\1\1\1\1\0\0\0\0\0\1\0\0\0\0\0\0\0\0\0\0\0\nMSK-3\n", 68) = 68
+close(16)                               = 0
+write(1, "[2023-07-17 22:40:03 I] CS2 my Wan ip: 95.25.246.248, my lan ip: 56934\n", 71) = 71
+gettimeofday({1689622803, 204249}, NULL) = 0
+clock_gettime(CLOCK_REALTIME, {1689622803, 204534336}) = 0
+brk(0xad000)                            = 0xad000
+gettimeofday({1689622803, 205934}, NULL) = 0
+open("/etc/TZ", O_RDONLY)               = -1 ENOENT (No such file or directory)
+open("/etc/localtime", O_RDONLY)        = 16
+read(16, "TZif2\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\21\0\0\0\21\0\0\0\0\0\0\0N\0\0\0\21\0\0\0&\200\0\0\0\233_\36\307\235>\362y\236*\356\371\236\3679i\237\204W\371", 68) = 68
+lseek(16, -68, SEEK_END)                = 1476
+read(16, "\0MDST\0MSD\0MSK\0+05\0EET\0EEST\0\0\0\0\0\0\1\0\0\0\0\1\1\1\1\1\1\1\0\0\0\0\0\1\0\0\0\0\0\0\0\0\0\0\0\nMSK-3\n", 68) = 68
+close(16)                               = 0
+write(1, "[2023-07-17 22:40:03 D] session vendor is 4\n", 44) = 44
+mmap2(NULL, 262144, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS|MAP_STACK, -1, 0) = 0xb64f8000
+mprotect(0xb64f8000, 4096, PROT_NONE)   = 0
+clone(child_stack=0xb6537018, flags=CLONE_VM|CLONE_FS|CLONE_FILES|CLONE_SIGHAND|CLONE_THREAD|CLONE_SYSVSEM|CLONE_SETTLS|CLONE_PARENT_SETTID|CLONE_CHILD_CLEARTID, parent_tidptr=0xb6537518, tls=0xb6537940, child_tidptr=0xb6537518) = 1763
+gettimeofday({1689622803, 208630}, NULL) = 0
+gettimeofday({1689622803, 208748}, NULL) = 0
+gettimeofday({1689622803, 208815}, NULL) = 0
+socket(PF_INET, SOCK_DGRAM, IPPROTO_IP) = 16
+setsockopt(16, SOL_SOCKET, SO_BROADCAST, [1], 4) = 0
+gettimeofday({1689622803, 209208}, NULL) = 0
+bind(16, {sa_family=AF_INET, sin_port=htons(20630), sin_addr=inet_addr("0.0.0.0")}, 16) = 0
+open("/etc/hosts", O_RDONLY)            = 17
+ioctl(17, TCGETS, 0xb65b66c8)           = -1 ENOTTY (Not a tty)
+read(17, "127.0.0.1\tlocalhost\n127.0.1.1\tmijia_camera\n", 4096) = 43
+read(17, "", 4096)                      = 0
+close(17)                               = 0
+open("/etc/hosts", O_RDONLY)            = 17
+ioctl(17, TCGETS, 0xb65b66c8)           = -1 ENOTTY (Not a tty)
+read(17, "127.0.0.1\tlocalhost\n127.0.1.1\tmijia_camera\n", 4096) = 43
+read(17, "", 4096)                      = 0
+close(17)                               = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+nanosleep({0, 1000000}, NULL)           = 0
+sendto(16, "\361\0\0\0", 4, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.68")}, 16) = 4
+sendto(16, "\361\0\0\0", 4, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.186")}, 16) = 4
+sendto(16, "\361\0\0\0", 4, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.216")}, 16) = 4
+sendto(16, "\361\22\0,0\177\225W\16A\346\304\10<\n\27\320\205\262\247\255z\4\n\256\0U\36\326\272\266\6x\23\"ZD^\34\250\336\304\0162\311\2032\347", 48, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.68")}, 16) = 48
+sendto(16, "\361\22\0,0\177\225W\16A\346\304\10<\n\27\320\205\262\247\255z\4\n\256\0U\36\326\272\266\6x\23\"ZD^\34\250\336\304\0162\311\2032\347", 48, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.186")}, 16) = 48
+sendto(16, "\361\22\0,0\177\225W\16A\346\304\10<\n\27\320\205\262\247\255z\4\n\256\0U\36\326\272\266\6x\23\"ZD^\34\250\336\304\0162\311\2032\347", 48, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.216")}, 16) = 48
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+sendto(16, "\361\22\0,0\177\225W\16A\346\304\10<\n\27\320\205\262\247\255z\4\n\256\0U\36\326\272\266\6x\23\"ZD^\34\250\336\304\0162\311\2032\347", 48, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.68")}, 16) = 48
+sendto(16, "\361\22\0,0\177\225W\16A\346\304\10<\n\27\320\205\262\247\255z\4\n\256\0U\36\326\272\266\6x\23\"ZD^\34\250\336\304\0162\311\2032\347", 48, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.186")}, 16) = 48
+sendto(16, "\361\22\0,0\177\225W\16A\346\304\10<\n\27\320\205\262\247\255z\4\n\256\0U\36\326\272\266\6x\23\"ZD^\34\250\336\304\0162\311\2032\347", 48, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.216")}, 16) = 48
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+sendto(16, "\361\22\0,0\177\225W\16A\346\304\10<\n\27\320\205\262\247\255z\4\n\256\0U\36\326\272\266\6x\23\"ZD^\34\250\336\304\0162\311\2032\347", 48, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.68")}, 16) = 48
+sendto(16, "\361\22\0,0\177\225W\16A\346\304\10<\n\27\320\205\262\247\255z\4\n\256\0U\36\326\272\266\6x\23\"ZD^\34\250\336\304\0162\311\2032\347", 48, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.186")}, 16) = 48
+sendto(16, "\361\22\0,0\177\225W\16A\346\304\10<\n\27\320\205\262\247\255z\4\n\256\0U\36\326\272\266\6x\23\"ZD^\34\250\336\304\0162\311\2032\347", 48, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.216")}, 16) = 48
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000}, NULL)         = 0
+nanosleep({0, 100000000},  <unfinished ...>
++++ killed by SIGINT +++

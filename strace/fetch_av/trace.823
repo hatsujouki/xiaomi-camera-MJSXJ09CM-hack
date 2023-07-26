@@ -1,0 +1,9 @@
+set_robust_list(0xb62f153c, 12)         = 0
+rt_sigaction(SIGALRM, {0x17e84, [ALRM], SA_RESTORER|SA_RESTART, 0xb6967d6b}, {SIG_DFL, [], 0}, 8) = 0
+prctl(PR_SET_NAME, "play_audio\0\0###e") = 0
+futex(0x2a9ac, FUTEX_WAIT_PRIVATE, 1, NULL) = 0
+futex(0x2a98c, FUTEX_WAIT_PRIVATE, 2, NULL) = -1 EAGAIN (Resource temporarily unavailable)
+futex(0x2a98c, FUTEX_WAKE_PRIVATE, 1)   = 0
+madvise(0xb62b2000, 237568, MADV_DONTNEED) = -1 ENOSYS (Function not implemented)
+exit(0)                                 = ?
++++ exited with 0 +++

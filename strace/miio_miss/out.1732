@@ -1,0 +1,686 @@
+set_robust_list(0xb677751c, 12)         = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+socket(PF_INET, SOCK_DGRAM, IPPROTO_IP) = 16
+setsockopt(16, SOL_SOCKET, SO_REUSEADDR, [1], 4) = 0
+setsockopt(16, SOL_SOCKET, SO_BROADCAST, [1], 4) = 0
+bind(16, {sa_family=AF_INET, sin_port=htons(32108), sin_addr=inet_addr("0.0.0.0")}, 16) = 0
+select(17, [16], NULL, NULL, {0, 200000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 200000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 200000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 200000}) = 0 (Timeout)
+select(17, [16], NULL, NULL, {0, 200000}) = 1 (in [16], left {0, 76325})
+recvfrom(16, "\3610\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 4
+sendto(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 24, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, 16) = 24
+select(17, [16], NULL, NULL, {0, 200000}) = 0 (Timeout)
+shutdown(16, SHUT_RDWR)                 = -1 ENOTCONN (Socket not connected)
+close(16)                               = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+nanosleep({0, 10000000}, NULL)          = 0
+gettimeofday({1689622804, 199639}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39986})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 24
+gettimeofday({1689622804, 207234}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39977})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 24
+gettimeofday({1689622804, 208739}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39986})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(57459), sin_addr=inet_addr("95.25.246.248")}, [16]) = 24
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39992})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(57459), sin_addr=inet_addr("95.25.246.248")}, [16]) = 24
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39984})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(57459), sin_addr=inet_addr("95.25.246.248")}, [16]) = 24
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39991})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(57459), sin_addr=inet_addr("95.25.246.248")}, [16]) = 24
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39992})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(57459), sin_addr=inet_addr("95.25.246.248")}, [16]) = 24
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39991})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(57459), sin_addr=inet_addr("95.25.246.248")}, [16]) = 24
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39991})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(57459), sin_addr=inet_addr("95.25.246.248")}, [16]) = 24
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39993})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 24
+gettimeofday({1689622804, 260434}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39971})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 24
+gettimeofday({1689622804, 261036}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39992})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 24
+gettimeofday({1689622804, 261417}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39994})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 24
+gettimeofday({1689622804, 261763}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39993})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 24
+gettimeofday({1689622804, 262135}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39989})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 24
+gettimeofday({1689622804, 264906}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39983})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 24
+gettimeofday({1689622804, 265747}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39983})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 24
+gettimeofday({1689622804, 266640}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39985})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 24
+gettimeofday({1689622804, 272742}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39990})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 24
+gettimeofday({1689622804, 273789}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39987})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(57459), sin_addr=inet_addr("95.25.246.248")}, [16]) = 24
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39986})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(57459), sin_addr=inet_addr("95.25.246.248")}, [16]) = 24
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39992})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(57459), sin_addr=inet_addr("95.25.246.248")}, [16]) = 24
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39993})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(57459), sin_addr=inet_addr("95.25.246.248")}, [16]) = 24
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39991})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(57459), sin_addr=inet_addr("95.25.246.248")}, [16]) = 24
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39994})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(57459), sin_addr=inet_addr("95.25.246.248")}, [16]) = 24
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39994})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(57459), sin_addr=inet_addr("95.25.246.248")}, [16]) = 24
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39993})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(57459), sin_addr=inet_addr("95.25.246.248")}, [16]) = 24
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39989})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(57459), sin_addr=inet_addr("95.25.246.248")}, [16]) = 24
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39987})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(57459), sin_addr=inet_addr("95.25.246.248")}, [16]) = 24
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39992})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 24
+gettimeofday({1689622804, 281175}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39993})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 24
+gettimeofday({1689622804, 281617}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39994})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 24
+gettimeofday({1689622804, 282001}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39992})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(57459), sin_addr=inet_addr("95.25.246.248")}, [16]) = 24
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39984})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(57459), sin_addr=inet_addr("95.25.246.248")}, [16]) = 24
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39990})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(57459), sin_addr=inet_addr("95.25.246.248")}, [16]) = 24
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39988})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(57459), sin_addr=inet_addr("95.25.246.248")}, [16]) = 24
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39994})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 24
+gettimeofday({1689622804, 292203}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39993})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 24
+gettimeofday({1689622804, 292547}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39994})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 24
+gettimeofday({1689622804, 292896}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39994})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 24
+gettimeofday({1689622804, 293222}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39994})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(57459), sin_addr=inet_addr("95.25.246.248")}, [16]) = 24
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39995})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(57459), sin_addr=inet_addr("95.25.246.248")}, [16]) = 24
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39995})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(57459), sin_addr=inet_addr("95.25.246.248")}, [16]) = 24
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39993})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(57459), sin_addr=inet_addr("95.25.246.248")}, [16]) = 24
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39993})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 24
+gettimeofday({1689622804, 294797}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39994})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 24
+gettimeofday({1689622804, 295138}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39994})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 24
+gettimeofday({1689622804, 295541}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39994})
+recvfrom(15, "\361A\0\24XMSYRU\0\0\0\2v7ZYXWU\0\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 24
+gettimeofday({1689622804, 295883}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39995})
+recvfrom(15, "\361\340\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 4
+sendto(15, "\361\341\0\0", 4, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, 16) = 4
+gettimeofday({1689622804, 296509}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39990})
+recvfrom(15, "\361\340\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 4
+sendto(15, "\361\341\0\0", 4, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, 16) = 4
+gettimeofday({1689622804, 297515}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39987})
+recvfrom(15, "\361\340\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 4
+sendto(15, "\361\341\0\0", 4, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, 16) = 4
+gettimeofday({1689622804, 298142}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39986})
+recvfrom(15, "\361\320\0\353\321\0\0\0\0\0\0\343\0\0\1\0{\"public_key\":\"6cf3da8f18ecfc677364b1c21605f3704cad7cfb15d2fb4cc44c81c222c59326\", \"sign\":\"a90c0388637883c09d572a66294eca52c69b430ee38567c6cc940c79878c35cd\",\"uuid\":\"37c066e2-0cde-450a-aa33-6b47ce19312f\",\"support_encrypt\":15}", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 239
+gettimeofday({1689622804, 298727}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39990})
+recvfrom(15, "\361\320\0\353\321\0\0\0\0\0\0\343\0\0\1\0{\"public_key\":\"6cf3da8f18ecfc677364b1c21605f3704cad7cfb15d2fb4cc44c81c222c59326\", \"sign\":\"a90c0388637883c09d572a66294eca52c69b430ee38567c6cc940c79878c35cd\",\"uuid\":\"37c066e2-0cde-450a-aa33-6b47ce19312f\",\"support_encrypt\":15}", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 239
+gettimeofday({1689622804, 299387}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39989})
+recvfrom(15, "\361\23\0\10h\206?N\235AWm", 1440, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.68")}, [16]) = 12
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39984})
+recvfrom(15, "\361\23\0\10h\206?N\235AWm", 1440, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.216")}, [16]) = 12
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39985})
+recvfrom(15, "\361\23\0\10h\206?N\235AWm", 1440, 0, {sa_family=AF_INET, sin_port=htons(32100), sin_addr=inet_addr("169.197.116.186")}, [16]) = 12
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39988})
+recvfrom(15, "\361\320\0\353\321\0\0\0\0\0\0\343\0\0\1\0{\"public_key\":\"6cf3da8f18ecfc677364b1c21605f3704cad7cfb15d2fb4cc44c81c222c59326\", \"sign\":\"a90c0388637883c09d572a66294eca52c69b430ee38567c6cc940c79878c35cd\",\"uuid\":\"37c066e2-0cde-450a-aa33-6b47ce19312f\",\"support_encrypt\":15}", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 239
+gettimeofday({1689622804, 303883}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39991})
+recvfrom(15, "\361\320\0\353\321\0\0\0\0\0\0\343\0\0\1\0{\"public_key\":\"6cf3da8f18ecfc677364b1c21605f3704cad7cfb15d2fb4cc44c81c222c59326\", \"sign\":\"a90c0388637883c09d572a66294eca52c69b430ee38567c6cc940c79878c35cd\",\"uuid\":\"37c066e2-0cde-450a-aa33-6b47ce19312f\",\"support_encrypt\":15}", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 239
+gettimeofday({1689622804, 304440}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39988})
+recvfrom(15, "\361\320\0\353\321\0\0\0\0\0\0\343\0\0\1\0{\"public_key\":\"6cf3da8f18ecfc677364b1c21605f3704cad7cfb15d2fb4cc44c81c222c59326\", \"sign\":\"a90c0388637883c09d572a66294eca52c69b430ee38567c6cc940c79878c35cd\",\"uuid\":\"37c066e2-0cde-450a-aa33-6b47ce19312f\",\"support_encrypt\":15}", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 239
+gettimeofday({1689622804, 305001}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39985})
+recvfrom(15, "\361\320\0\353\321\0\0\0\0\0\0\343\0\0\1\0{\"public_key\":\"6cf3da8f18ecfc677364b1c21605f3704cad7cfb15d2fb4cc44c81c222c59326\", \"sign\":\"a90c0388637883c09d572a66294eca52c69b430ee38567c6cc940c79878c35cd\",\"uuid\":\"37c066e2-0cde-450a-aa33-6b47ce19312f\",\"support_encrypt\":15}", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 239
+gettimeofday({1689622804, 326234}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39979})
+recvfrom(15, "\361\320\0\353\321\0\0\0\0\0\0\343\0\0\1\0{\"public_key\":\"6cf3da8f18ecfc677364b1c21605f3704cad7cfb15d2fb4cc44c81c222c59326\", \"sign\":\"a90c0388637883c09d572a66294eca52c69b430ee38567c6cc940c79878c35cd\",\"uuid\":\"37c066e2-0cde-450a-aa33-6b47ce19312f\",\"support_encrypt\":15}", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 239
+gettimeofday({1689622804, 327225}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39986})
+recvfrom(15, "\361\320\0\353\321\0\0\0\0\0\0\343\0\0\1\0{\"public_key\":\"6cf3da8f18ecfc677364b1c21605f3704cad7cfb15d2fb4cc44c81c222c59326\", \"sign\":\"a90c0388637883c09d572a66294eca52c69b430ee38567c6cc940c79878c35cd\",\"uuid\":\"37c066e2-0cde-450a-aa33-6b47ce19312f\",\"support_encrypt\":15}", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 239
+gettimeofday({1689622804, 327804}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39984})
+recvfrom(15, "\361\320\0\353\321\0\0\0\0\0\0\343\0\0\1\0{\"public_key\":\"6cf3da8f18ecfc677364b1c21605f3704cad7cfb15d2fb4cc44c81c222c59326\", \"sign\":\"a90c0388637883c09d572a66294eca52c69b430ee38567c6cc940c79878c35cd\",\"uuid\":\"37c066e2-0cde-450a-aa33-6b47ce19312f\",\"support_encrypt\":15}", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 239
+gettimeofday({1689622804, 328422}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39991})
+recvfrom(15, "\361\320\0\353\321\0\0\0\0\0\0\343\0\0\1\0{\"public_key\":\"6cf3da8f18ecfc677364b1c21605f3704cad7cfb15d2fb4cc44c81c222c59326\", \"sign\":\"a90c0388637883c09d572a66294eca52c69b430ee38567c6cc940c79878c35cd\",\"uuid\":\"37c066e2-0cde-450a-aa33-6b47ce19312f\",\"support_encrypt\":15}", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 239
+gettimeofday({1689622804, 328998}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39980})
+recvfrom(15, "\361\320\0\353\321\0\0\0\0\0\0\343\0\0\1\0{\"public_key\":\"6cf3da8f18ecfc677364b1c21605f3704cad7cfb15d2fb4cc44c81c222c59326\", \"sign\":\"a90c0388637883c09d572a66294eca52c69b430ee38567c6cc940c79878c35cd\",\"uuid\":\"37c066e2-0cde-450a-aa33-6b47ce19312f\",\"support_encrypt\":15}", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 239
+gettimeofday({1689622804, 330533}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39980})
+recvfrom(15, "\361\320\0\353\321\0\0\0\0\0\0\343\0\0\1\0{\"public_key\":\"6cf3da8f18ecfc677364b1c21605f3704cad7cfb15d2fb4cc44c81c222c59326\", \"sign\":\"a90c0388637883c09d572a66294eca52c69b430ee38567c6cc940c79878c35cd\",\"uuid\":\"37c066e2-0cde-450a-aa33-6b47ce19312f\",\"support_encrypt\":15}", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 239
+gettimeofday({1689622804, 335142}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39970})
+recvfrom(15, "\361\320\0\353\321\0\0\0\0\0\0\343\0\0\1\0{\"public_key\":\"6cf3da8f18ecfc677364b1c21605f3704cad7cfb15d2fb4cc44c81c222c59326\", \"sign\":\"a90c0388637883c09d572a66294eca52c69b430ee38567c6cc940c79878c35cd\",\"uuid\":\"37c066e2-0cde-450a-aa33-6b47ce19312f\",\"support_encrypt\":15}", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 239
+gettimeofday({1689622804, 338371}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39982})
+recvfrom(15, "\361\320\0\353\321\0\0\0\0\0\0\343\0\0\1\0{\"public_key\":\"6cf3da8f18ecfc677364b1c21605f3704cad7cfb15d2fb4cc44c81c222c59326\", \"sign\":\"a90c0388637883c09d572a66294eca52c69b430ee38567c6cc940c79878c35cd\",\"uuid\":\"37c066e2-0cde-450a-aa33-6b47ce19312f\",\"support_encrypt\":15}", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 239
+gettimeofday({1689622804, 340365}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39973})
+recvfrom(15, "\361\320\0\353\321\0\0\0\0\0\0\343\0\0\1\0{\"public_key\":\"6cf3da8f18ecfc677364b1c21605f3704cad7cfb15d2fb4cc44c81c222c59326\", \"sign\":\"a90c0388637883c09d572a66294eca52c69b430ee38567c6cc940c79878c35cd\",\"uuid\":\"37c066e2-0cde-450a-aa33-6b47ce19312f\",\"support_encrypt\":15}", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 239
+gettimeofday({1689622804, 343736}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39982})
+recvfrom(15, "\361\320\0\353\321\0\0\0\0\0\0\343\0\0\1\0{\"public_key\":\"6cf3da8f18ecfc677364b1c21605f3704cad7cfb15d2fb4cc44c81c222c59326\", \"sign\":\"a90c0388637883c09d572a66294eca52c69b430ee38567c6cc940c79878c35cd\",\"uuid\":\"37c066e2-0cde-450a-aa33-6b47ce19312f\",\"support_encrypt\":15}", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 239
+gettimeofday({1689622804, 345821}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39982})
+recvfrom(15, "\361\320\0\353\321\0\0\0\0\0\0\343\0\0\1\0{\"public_key\":\"6cf3da8f18ecfc677364b1c21605f3704cad7cfb15d2fb4cc44c81c222c59326\", \"sign\":\"a90c0388637883c09d572a66294eca52c69b430ee38567c6cc940c79878c35cd\",\"uuid\":\"37c066e2-0cde-450a-aa33-6b47ce19312f\",\"support_encrypt\":15}", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 239
+sendto(15, "\361\321\0&\321\0\0\21\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0", 42, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, 16) = 42
+gettimeofday({1689622804, 355374}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39979})
+recvfrom(15, "\361\320\0\353\321\0\0\0\0\0\0\343\0\0\1\0{\"public_key\":\"6cf3da8f18ecfc677364b1c21605f3704cad7cfb15d2fb4cc44c81c222c59326\", \"sign\":\"a90c0388637883c09d572a66294eca52c69b430ee38567c6cc940c79878c35cd\",\"uuid\":\"37c066e2-0cde-450a-aa33-6b47ce19312f\",\"support_encrypt\":15}", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 239
+gettimeofday({1689622804, 356664}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39986})
+recvfrom(15, "\361\320\0\353\321\0\0\0\0\0\0\343\0\0\1\0{\"public_key\":\"6cf3da8f18ecfc677364b1c21605f3704cad7cfb15d2fb4cc44c81c222c59326\", \"sign\":\"a90c0388637883c09d572a66294eca52c69b430ee38567c6cc940c79878c35cd\",\"uuid\":\"37c066e2-0cde-450a-aa33-6b47ce19312f\",\"support_encrypt\":15}", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 239
+gettimeofday({1689622804, 362099}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39973})
+recvfrom(15, "\361\320\0\353\321\0\0\0\0\0\0\343\0\0\1\0{\"public_key\":\"6cf3da8f18ecfc677364b1c21605f3704cad7cfb15d2fb4cc44c81c222c59326\", \"sign\":\"a90c0388637883c09d572a66294eca52c69b430ee38567c6cc940c79878c35cd\",\"uuid\":\"37c066e2-0cde-450a-aa33-6b47ce19312f\",\"support_encrypt\":15}", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 239
+gettimeofday({1689622804, 362825}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39988})
+recvfrom(15, "\361\320\0\353\321\0\0\0\0\0\0\343\0\0\1\0{\"public_key\":\"6cf3da8f18ecfc677364b1c21605f3704cad7cfb15d2fb4cc44c81c222c59326\", \"sign\":\"a90c0388637883c09d572a66294eca52c69b430ee38567c6cc940c79878c35cd\",\"uuid\":\"37c066e2-0cde-450a-aa33-6b47ce19312f\",\"support_encrypt\":15}", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 239
+gettimeofday({1689622804, 363952}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39977})
+recvfrom(15, "\361\320\0\353\321\0\0\0\0\0\0\343\0\0\1\0{\"public_key\":\"6cf3da8f18ecfc677364b1c21605f3704cad7cfb15d2fb4cc44c81c222c59326\", \"sign\":\"a90c0388637883c09d572a66294eca52c69b430ee38567c6cc940c79878c35cd\",\"uuid\":\"37c066e2-0cde-450a-aa33-6b47ce19312f\",\"support_encrypt\":15}", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 239
+gettimeofday({1689622804, 364568}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39992})
+recvfrom(15, "\361\320\0\353\321\0\0\0\0\0\0\343\0\0\1\0{\"public_key\":\"6cf3da8f18ecfc677364b1c21605f3704cad7cfb15d2fb4cc44c81c222c59326\", \"sign\":\"a90c0388637883c09d572a66294eca52c69b430ee38567c6cc940c79878c35cd\",\"uuid\":\"37c066e2-0cde-450a-aa33-6b47ce19312f\",\"support_encrypt\":15}", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 239
+gettimeofday({1689622804, 365069}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39990})
+recvfrom(15, "\361\320\0\353\321\0\0\0\0\0\0\343\0\0\1\0{\"public_key\":\"6cf3da8f18ecfc677364b1c21605f3704cad7cfb15d2fb4cc44c81c222c59326\", \"sign\":\"a90c0388637883c09d572a66294eca52c69b430ee38567c6cc940c79878c35cd\",\"uuid\":\"37c066e2-0cde-450a-aa33-6b47ce19312f\",\"support_encrypt\":15}", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 239
+gettimeofday({1689622804, 367353}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39981})
+recvfrom(15, "\361\320\0\353\321\0\0\0\0\0\0\343\0\0\1\0{\"public_key\":\"6cf3da8f18ecfc677364b1c21605f3704cad7cfb15d2fb4cc44c81c222c59326\", \"sign\":\"a90c0388637883c09d572a66294eca52c69b430ee38567c6cc940c79878c35cd\",\"uuid\":\"37c066e2-0cde-450a-aa33-6b47ce19312f\",\"support_encrypt\":15}", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 239
+gettimeofday({1689622804, 369677}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39980})
+recvfrom(15, "\361\320\0\353\321\0\0\0\0\0\0\343\0\0\1\0{\"public_key\":\"6cf3da8f18ecfc677364b1c21605f3704cad7cfb15d2fb4cc44c81c222c59326\", \"sign\":\"a90c0388637883c09d572a66294eca52c69b430ee38567c6cc940c79878c35cd\",\"uuid\":\"37c066e2-0cde-450a-aa33-6b47ce19312f\",\"support_encrypt\":15}", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 239
+gettimeofday({1689622804, 370611}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39984})
+recvfrom(15, "\361\320\0\353\321\0\0\0\0\0\0\343\0\0\1\0{\"public_key\":\"6cf3da8f18ecfc677364b1c21605f3704cad7cfb15d2fb4cc44c81c222c59326\", \"sign\":\"a90c0388637883c09d572a66294eca52c69b430ee38567c6cc940c79878c35cd\",\"uuid\":\"37c066e2-0cde-450a-aa33-6b47ce19312f\",\"support_encrypt\":15}", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 239
+gettimeofday({1689622804, 371185}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39991})
+recvfrom(15, "\361\340\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 4
+sendto(15, "\361\341\0\0", 4, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, 16) = 4
+gettimeofday({1689622804, 374008}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39983})
+recvfrom(15, "\361\320\0\353\321\0\0\0\0\0\0\343\0\0\1\0{\"public_key\":\"6cf3da8f18ecfc677364b1c21605f3704cad7cfb15d2fb4cc44c81c222c59326\", \"sign\":\"a90c0388637883c09d572a66294eca52c69b430ee38567c6cc940c79878c35cd\",\"uuid\":\"37c066e2-0cde-450a-aa33-6b47ce19312f\",\"support_encrypt\":15}", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 239
+gettimeofday({1689622804, 374607}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39983})
+recvfrom(15, "\361\320\0\353\321\0\0\0\0\0\0\343\0\0\1\0{\"public_key\":\"6cf3da8f18ecfc677364b1c21605f3704cad7cfb15d2fb4cc44c81c222c59326\", \"sign\":\"a90c0388637883c09d572a66294eca52c69b430ee38567c6cc940c79878c35cd\",\"uuid\":\"37c066e2-0cde-450a-aa33-6b47ce19312f\",\"support_encrypt\":15}", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 239
+gettimeofday({1689622804, 375234}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39991})
+recvfrom(15, "\361\320\0\353\321\0\0\0\0\0\0\343\0\0\1\0{\"public_key\":\"6cf3da8f18ecfc677364b1c21605f3704cad7cfb15d2fb4cc44c81c222c59326\", \"sign\":\"a90c0388637883c09d572a66294eca52c69b430ee38567c6cc940c79878c35cd\",\"uuid\":\"37c066e2-0cde-450a-aa33-6b47ce19312f\",\"support_encrypt\":15}", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 239
+gettimeofday({1689622804, 377159}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39985})
+recvfrom(15, "\361\320\0\353\321\0\0\0\0\0\0\343\0\0\1\0{\"public_key\":\"6cf3da8f18ecfc677364b1c21605f3704cad7cfb15d2fb4cc44c81c222c59326\", \"sign\":\"a90c0388637883c09d572a66294eca52c69b430ee38567c6cc940c79878c35cd\",\"uuid\":\"37c066e2-0cde-450a-aa33-6b47ce19312f\",\"support_encrypt\":15}", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 239
+gettimeofday({1689622804, 381354}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39973})
+recvfrom(15, "\361\320\0\353\321\0\0\0\0\0\0\343\0\0\1\0{\"public_key\":\"6cf3da8f18ecfc677364b1c21605f3704cad7cfb15d2fb4cc44c81c222c59326\", \"sign\":\"a90c0388637883c09d572a66294eca52c69b430ee38567c6cc940c79878c35cd\",\"uuid\":\"37c066e2-0cde-450a-aa33-6b47ce19312f\",\"support_encrypt\":15}", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 239
+gettimeofday({1689622804, 382010}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39989})
+recvfrom(15, "\361\320\0\353\321\0\0\0\0\0\0\343\0\0\1\0{\"public_key\":\"6cf3da8f18ecfc677364b1c21605f3704cad7cfb15d2fb4cc44c81c222c59326\", \"sign\":\"a90c0388637883c09d572a66294eca52c69b430ee38567c6cc940c79878c35cd\",\"uuid\":\"37c066e2-0cde-450a-aa33-6b47ce19312f\",\"support_encrypt\":15}", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 239
+gettimeofday({1689622804, 382804}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 0 (Timeout)
+gettimeofday({1689622804, 617279}, NULL) = 0
+futex(0xb6f6e768, FUTEX_WAKE_PRIVATE, 1) = 1
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 5704})
+recvfrom(15, "\361\320\0\223\321\0\0\1\0\0\0Q\0\0\20\1\246\366<\307e\35/\363g\31\346\310\10'}F\355\326\216\275r\0\26\365q\"xM\374\0269\230\275\365\7k\323z)6|\32\306\226z\320?8|)\377m\370m\"\225\243}<\34\323\342%\246\231\247?\16_\240\307\365\37M[\362v\0\0\0\"\0\0\20\1i\302f\257\363\354Z\353\256\331~\230KS\22E\20L\204\336\214I\2148\302\310\324\17\301_\0\0\0\20\0\0\20\1\212_$\323\36\253\25\351\276\234\251\310", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 151
+gettimeofday({1689622804, 652975}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39974})
+recvfrom(15, "\361\321\0\6\321\0\0\1\0\0", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622804, 653829}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 0 (Timeout)
+gettimeofday({1689622804, 775543}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 26564})
+recvfrom(15, "\361\321\0\6\321\0\0\1\0\1", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622804, 793282}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 0 (Timeout)
+gettimeofday({1689622804, 842665}, NULL) = 0
+futex(0xb6f6e768, FUTEX_WAKE_PRIVATE, 1) = 1
+select(16, [15], NULL, NULL, {0, 40000}) = 0 (Timeout)
+gettimeofday({1689622804, 886348}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 0 (Timeout)
+gettimeofday({1689622804, 927323}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 20784})
+recvfrom(15, "\361\321\0\n\321\2\0\3\0\0\0\1\0\2", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 14
+futex(0xb6f6e768, FUTEX_WAIT_PRIVATE, 2, NULL) = 0
+gettimeofday({1689622805, 13227}, NULL) = 0
+futex(0xb6f6e768, FUTEX_WAKE_PRIVATE, 1) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39989})
+recvfrom(15, "\361\321\0\n\321\2\0\3\0\3\0\4\0\5", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 14
+gettimeofday({1689622805, 13767}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39987})
+recvfrom(15, "\361\321\0\20\321\2\0\6\0\6\0\7\0\10\0\t\0\n\0\v", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 20
+gettimeofday({1689622805, 14538}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39990})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0\f", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622805, 14939}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39992})
+recvfrom(15, "\361\321\0\26\321\2\0\t\0\r\0\16\0\17\0\20\0\21\0\22\0\23\0\24\0\25", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 26
+gettimeofday({1689622805, 15354}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39987})
+recvfrom(15, "\361\321\0\f\321\2\0\4\0\26\0\27\0\30\0\31", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 16
+gettimeofday({1689622805, 15811}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 38336})
+recvfrom(15, "\361\321\0\n\321\2\0\3\0\32\0\33\0\34", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 14
+gettimeofday({1689622805, 18037}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 31078})
+recvfrom(15, "\361\320\0'\321\0\0\2\0\0\0\37\0\0\20\1\216\226\265\214\200$v\200~\256\327`\237\26\204\360*\346\266\"\"\32\203\23\326:\244", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 43
+futex(0xb6f6e768, FUTEX_WAIT_PRIVATE, 2, NULL) = 0
+gettimeofday({1689622805, 42605}, NULL) = 0
+futex(0xb6f6e768, FUTEX_WAKE_PRIVATE, 1) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39985})
+recvfrom(15, "\361\321\0\10\321\2\0\2\0\35\0\36", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 12
+gettimeofday({1689622805, 45349}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39986})
+recvfrom(15, "\361\320\0'\321\0\0\2\0\0\0\37\0\0\20\1\216\226\265\214\200$v\200~\256\327`\237\26\204\360*\346\266\"\"\32\203\23\326:\244", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 43
+gettimeofday({1689622805, 45777}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39992})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0\37", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622805, 46143}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 33695})
+recvfrom(15, "\361\321\0\n\321\2\0\3\0 \0!\0\"", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 14
+gettimeofday({1689622805, 53663}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 30370})
+recvfrom(15, "\361\320\0'\321\0\0\2\0\0\0\37\0\0\20\1\216\226\265\214\200$v\200~\256\327`\237\26\204\360*\346\266\"\"\32\203\23\326:\244", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 43
+gettimeofday({1689622805, 64548}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 29617})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0#", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622805, 132320}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 0 (Timeout)
+futex(0xb6f6e768, FUTEX_WAIT_PRIVATE, 2, NULL) = 0
+gettimeofday({1689622805, 181299}, NULL) = 0
+futex(0xb6f6e768, FUTEX_WAKE_PRIVATE, 1) = 1
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 32074})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0$", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622805, 195160}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39986})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0%", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622805, 195552}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 36517})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0&", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622805, 200202}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 17133})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0'", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622805, 223755}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 8474})
+recvfrom(15, "\361\321\0\10\321\2\0\2\0(\0)", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 12
+gettimeofday({1689622805, 256004}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 0 (Timeout)
+gettimeofday({1689622805, 296302}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 12099})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0*", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622805, 324977}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 0 (Timeout)
+gettimeofday({1689622805, 365420}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 37453})
+recvfrom(15, "\361\321\0\10\321\2\0\2\0+\0,", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 12
+gettimeofday({1689622805, 369013}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 0 (Timeout)
+gettimeofday({1689622805, 410532}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 0 (Timeout)
+gettimeofday({1689622805, 452936}, NULL) = 0
+futex(0xb6f6e768, FUTEX_WAKE_PRIVATE, 1) = 1
+select(16, [15], NULL, NULL, {0, 40000}) = 0 (Timeout)
+gettimeofday({1689622805, 498058}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 0 (Timeout)
+gettimeofday({1689622805, 541428}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 50})
+recvfrom(15, "\361\321\0\34\321\2\0\f\0-\0.\0/\0-\0.\0000\0-\0.\0001\0-\0.\0002", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 32
+gettimeofday({1689622805, 582180}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 6474})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0003", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622805, 616401}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 0 (Timeout)
+gettimeofday({1689622805, 656927}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 21735})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0004", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622805, 676528}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 11637})
+recvfrom(15, "\361\321\0\10\321\2\0\2\0005\0006", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 12
+gettimeofday({1689622805, 717201}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 0 (Timeout)
+futex(0xb6f6e768, FUTEX_WAIT_PRIVATE, 2, NULL) = 0
+gettimeofday({1689622805, 767480}, NULL) = 0
+futex(0xb6f6e768, FUTEX_WAKE_PRIVATE, 1) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39983})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0007", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622805, 767989}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39987})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0008", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622805, 769511}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 37187})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0009", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622805, 773302}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 0 (Timeout)
+gettimeofday({1689622805, 813720}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 25522})
+recvfrom(15, "\361\321\0\10\321\2\0\2\0:\0;", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 12
+futex(0xb6f6e768, FUTEX_WAIT_PRIVATE, 2, NULL) = 0
+gettimeofday({1689622805, 846136}, NULL) = 0
+futex(0xb6f6e768, FUTEX_WAKE_PRIVATE, 1) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39985})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0<", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622805, 846706}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 34590})
+recvfrom(15, "\361\321\0\f\321\2\0\4\0=\0>\0?\0@", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 16
+gettimeofday({1689622805, 853244}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 29061})
+recvfrom(15, "\361\321\0\10\321\2\0\2\0A\0B", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 12
+gettimeofday({1689622805, 864817}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39988})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0C", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622805, 865284}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 30371})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0D", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622805, 875889}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 0 (Timeout)
+futex(0xb6f6e768, FUTEX_WAIT_PRIVATE, 2, NULL) = 0
+gettimeofday({1689622805, 917503}, NULL) = 0
+futex(0xb6f6e768, FUTEX_WAKE_PRIVATE, 1) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 34924})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0E", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622805, 923395}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39977})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0F", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622805, 924852}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 422})
+recvfrom(15, "\361\321\0\n\321\2\0\3\0G\0H\0I", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 14
+gettimeofday({1689622805, 965421}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 0 (Timeout)
+gettimeofday({1689622806, 18290}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 4311})
+recvfrom(15, "\361\321\0\n\321\2\0\3\0J\0K\0L", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 14
+futex(0xb6f6e768, FUTEX_WAIT_PRIVATE, 2, NULL) = 0
+gettimeofday({1689622806, 60462}, NULL) = 0
+futex(0xb6f6e768, FUTEX_WAKE_PRIVATE, 1) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 35315})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0M", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622806, 66409}, NULL) = 0
+futex(0xb6f6e768, FUTEX_WAKE_PRIVATE, 1) = 1
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 29237})
+recvfrom(15, "\361\321\0\10\321\2\0\2\0N\0O", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 12
+futex(0xb6f6e768, FUTEX_WAIT_PRIVATE, 2, NULL) = 0
+gettimeofday({1689622806, 89870}, NULL) = 0
+futex(0xb6f6e768, FUTEX_WAKE_PRIVATE, 1) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 30265})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0P", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622806, 102645}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 31770})
+recvfrom(15, "\361\321\0\n\321\2\0\3\0Q\0R\0S", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 14
+futex(0xb6f6e768, FUTEX_WAIT_PRIVATE, 2, NULL) = 0
+gettimeofday({1689622806, 118665}, NULL) = 0
+futex(0xb6f6e768, FUTEX_WAKE_PRIVATE, 1) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 36635})
+recvfrom(15, "\361\321\0\10\321\2\0\2\0T\0U", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 12
+gettimeofday({1689622806, 122820}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 0 (Timeout)
+gettimeofday({1689622806, 163571}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 25440})
+recvfrom(15, "\361\321\0\n\321\2\0\3\0V\0W\0X", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 14
+futex(0xb6f6e768, FUTEX_WAIT_PRIVATE, 2, NULL) = 0
+gettimeofday({1689622806, 199071}, NULL) = 0
+futex(0xb6f6e768, FUTEX_WAKE_PRIVATE, 1) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39985})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0Y", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622806, 202017}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 18926})
+recvfrom(15, "\361\321\0\f\321\2\0\4\0Z\0[\0\\\0]", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 16
+gettimeofday({1689622806, 224112}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 0 (Timeout)
+gettimeofday({1689622806, 264393}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 34918})
+recvfrom(15, "\361\321\0\n\321\2\0\3\0^\0_\0`", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 14
+gettimeofday({1689622806, 273839}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 11600})
+recvfrom(15, "\361\321\0\10\321\2\0\2\0a\0b", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 12
+gettimeofday({1689622806, 315269}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39979})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0c", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622806, 317954}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 10125})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0d", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622806, 358086}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39983})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0e", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622806, 360580}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 0 (Timeout)
+gettimeofday({1689622806, 402535}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 28010})
+recvfrom(15, "\361\321\0\10\321\2\0\2\0f\0g", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 12
+gettimeofday({1689622806, 416152}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 0 (Timeout)
+gettimeofday({1689622806, 456438}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 36926})
+recvfrom(15, "\361\321\0\10\321\2\0\2\0h\0i", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 12
+gettimeofday({1689622806, 460826}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 0 (Timeout)
+gettimeofday({1689622806, 501955}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 14939})
+recvfrom(15, "\361\321\0\10\321\2\0\2\0j\0k", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 12
+gettimeofday({1689622806, 527600}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 6030})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0l", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622806, 562133}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 29130})
+recvfrom(15, "\361\321\0\10\321\2\0\2\0m\0n", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 12
+gettimeofday({1689622806, 573754}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 0 (Timeout)
+gettimeofday({1689622806, 704139}, NULL) = 0
+futex(0xb6f6e768, FUTEX_WAKE_PRIVATE, 1) = 1
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 14901})
+recvfrom(15, "\361\321\0\f\321\2\0\4\0o\0p\0q\0r", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 16
+gettimeofday({1689622806, 731108}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 16077})
+recvfrom(15, "\361\321\0\16\321\2\0\5\0s\0t\0u\0v\0w", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 18
+gettimeofday({1689622806, 759109}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 23620})
+recvfrom(15, "\361\321\0\10\321\2\0\2\0x\0y", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 12
+gettimeofday({1689622806, 776108}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 28744})
+recvfrom(15, "\361\321\0\10\321\2\0\2\0z\0{", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 12
+gettimeofday({1689622806, 794841}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 24568})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0|", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622806, 810921}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 30209})
+recvfrom(15, "\361\321\0\10\321\2\0\2\0}\0~", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 12
+gettimeofday({1689622806, 821281}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 0 (Timeout)
+gettimeofday({1689622806, 861636}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 35919})
+recvfrom(15, "\361\321\0\n\321\2\0\3\0\177\0\200\0\201", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 14
+gettimeofday({1689622806, 872175}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 0 (Timeout)
+gettimeofday({1689622806, 920645}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 25211})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0\202", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+futex(0xb6f6e768, FUTEX_WAIT_PRIVATE, 2, NULL) = 0
+gettimeofday({1689622806, 962208}, NULL) = 0
+futex(0xb6f6e768, FUTEX_WAKE_PRIVATE, 1) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39984})
+recvfrom(15, "\361\321\0\10\321\2\0\2\0\203\0\204", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 12
+gettimeofday({1689622806, 964762}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 37599})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0\205", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622806, 973568}, NULL) = 0
+futex(0xb6f6e768, FUTEX_WAKE_PRIVATE, 1) = 1
+select(16, [15], NULL, NULL, {0, 40000}) = 0 (Timeout)
+gettimeofday({1689622807, 15672}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 33103})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0\206", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+futex(0xb6f6e768, FUTEX_WAIT_PRIVATE, 2, NULL) = 0
+gettimeofday({1689622807, 48202}, NULL) = 0
+futex(0xb6f6e768, FUTEX_WAKE_PRIVATE, 1) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39986})
+recvfrom(15, "\361\321\0\10\321\2\0\2\0\207\0\210", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 12
+gettimeofday({1689622807, 49735}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 18082})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0\211", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+futex(0xb6f6e768, FUTEX_WAIT_PRIVATE, 2, NULL) = 0
+gettimeofday({1689622807, 85630}, NULL) = 0
+futex(0xb6f6e768, FUTEX_WAKE_PRIVATE, 1) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39984})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0\212", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622807, 89204}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39992})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0\213", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622807, 89574}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 38424})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0\214", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622807, 91711}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 16815})
+recvfrom(15, "\361\321\0\10\321\2\0\2\0\215\0\216", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 12
+futex(0xb6f6e768, FUTEX_WAIT_PRIVATE, 2, NULL) = 0
+gettimeofday({1689622807, 118734}, NULL) = 0
+futex(0xb6f6e768, FUTEX_WAKE_PRIVATE, 1) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 32546})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0\217", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622807, 127662}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 0 (Timeout)
+gettimeofday({1689622807, 168139}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 35431})
+recvfrom(15, "\361\321\0\f\321\2\0\4\0\220\0\221\0\222\0\223", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 16
+gettimeofday({1689622807, 173361}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 0 (Timeout)
+gettimeofday({1689622807, 213874}, NULL) = 0
+futex(0xb6f6e768, FUTEX_WAKE_PRIVATE, 1) = 1
+select(16, [15], NULL, NULL, {0, 40000}) = 0 (Timeout)
+futex(0xb6f6e768, FUTEX_WAIT_PRIVATE, 2, NULL) = 0
+gettimeofday({1689622807, 276671}, NULL) = 0
+futex(0xb6f6e768, FUTEX_WAKE_PRIVATE, 1) = 1
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39986})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0\224", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622807, 288979}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39992})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0\225", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622807, 289479}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39991})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0\226", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622807, 291138}, NULL) = 0
+futex(0xb6f6e768, FUTEX_WAKE_PRIVATE, 1) = 1
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 16622})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0\227", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+futex(0xb6f6e768, FUTEX_WAIT_PRIVATE, 2, NULL) = 0
+gettimeofday({1689622807, 322777}, NULL) = 0
+futex(0xb6f6e768, FUTEX_WAKE_PRIVATE, 1) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 32853})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0\230", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622807, 331260}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 15182})
+recvfrom(15, "\361\321\0\n\321\2\0\3\0\231\0\232\0\233", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 14
+gettimeofday({1689622807, 358297}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 11717})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0\234", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622807, 394877}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 14816})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0\235", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622807, 420840}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39986})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0\236", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622807, 421257}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 5468})
+recvfrom(15, "\361\321\0\10\321\2\0\2\0\237\0\240", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 12
+gettimeofday({1689622807, 456918}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 0 (Timeout)
+gettimeofday({1689622807, 497351}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 15596})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0\241", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+futex(0xb6f6e768, FUTEX_WAIT_PRIVATE, 2, NULL) = 0
+gettimeofday({1689622807, 527297}, NULL) = 0
+futex(0xb6f6e768, FUTEX_WAKE_PRIVATE, 1) = 1
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 33361})
+recvfrom(15, "\361\321\0\10\321\2\0\2\0\242\0\243", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 12
+gettimeofday({1689622807, 535684}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 8226})
+recvfrom(15, "\361\321\0\f\321\2\0\4\0\244\0\245\0\246\0\247", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 16
+futex(0xb6f6e768, FUTEX_WAIT_PRIVATE, 2, NULL) = 0
+gettimeofday({1689622807, 572254}, NULL) = 0
+futex(0xb6f6e768, FUTEX_WAKE_PRIVATE, 1) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 33352})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0\250", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622807, 579609}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 0 (Timeout)
+gettimeofday({1689622807, 620780}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 37643})
+recvfrom(15, "\361\321\0\10\321\2\0\2\0\251\0\252", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 12
+gettimeofday({1689622807, 623770}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 39639})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0\253", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622807, 624612}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 1229})
+recvfrom(15, "\361\321\0\6\321\2\0\1\0\254", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 10
+gettimeofday({1689622807, 664568}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 35534})
+recvfrom(15, "\361\321\0\f\321\2\0\4\0\255\0\256\0\257\0\260", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 16
+gettimeofday({1689622807, 673040}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 0 (Timeout)
+gettimeofday({1689622807, 714218}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 29106})
+recvfrom(15, "\361\321\0\n\321\2\0\3\0\261\0\262\0\263", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 14
+gettimeofday({1689622807, 725672}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 0 (Timeout)
+gettimeofday({1689622807, 766345}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 35737})
+recvfrom(15, "\361\321\0\10\321\2\0\2\0\264\0\265", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 12
+futex(0xb6f6e768, FUTEX_WAIT_PRIVATE, 2, NULL) = 0
+gettimeofday({1689622807, 772613}, NULL) = 0
+futex(0xb6f6e768, FUTEX_WAKE_PRIVATE, 1) = 0
+select(16, [15], NULL, NULL, {0, 40000}) = 1 (in [15], left {0, 30970})
+recvfrom(15, "\361\321\0\10\321\2\0\2\0\264\0\265", 1440, 0, {sa_family=AF_INET, sin_port=htons(14383), sin_addr=inet_addr("192.168.1.71")}, [16]) = 12
+gettimeofday({1689622807, 782330}, NULL) = 0
+select(16, [15], NULL, NULL, {0, 40000} <unfinished ...>
++++ killed by SIGINT +++
