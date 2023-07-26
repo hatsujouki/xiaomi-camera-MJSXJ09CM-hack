@@ -84,3 +84,7 @@ go build server.go
 
 
 собранные бинари соответствующих архитектур я положил в директорию build
+
+
+
+![](https://github.com/hatsujouki/xiaomi-camera-MJSXJ09CM-hack/blob/main/proof_of_work.gif)
