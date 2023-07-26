@@ -25,7 +25,7 @@ I compiled natively on raspberry pi, but cross-compilation on amd64 is also poss
 
 the connection from the client to the server goes on UDP port 1053 and it is according to the precepts of UDP without confirmation of receipt of the packet.
 
-inside camera run as ./client <your PC ip address>:<port>
+inside camera run as ./client \<your PC ip address\>:\<port\>
 
 on a PC - build server.go and run like this:
 
@@ -67,7 +67,7 @@ go build -ldflags "-linkmode external -extldflags -static" client.go
 
 коннект от клиента к серверу идет по UDP порту 1053 и он по заветам UDP без подтверждения получения пакета.
 
-внутри камеры запускать как ./client <your PC ip address>:<port>
+внутри камеры запускать как ./client \<your PC ip address\>:\<port\>
 
 на пк - собрать server.go и запустить вот таким образом:
 
