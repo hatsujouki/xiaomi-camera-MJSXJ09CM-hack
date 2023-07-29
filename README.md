@@ -88,3 +88,11 @@ go build server.go
 
 
 ![](https://github.com/hatsujouki/xiaomi-camera-MJSXJ09CM-hack/blob/main/proof_of_work.gif)
+
+
+как управлять положением камеры:
+
+	1. камера: /mnt/data/bin/mortoxd 2>&1| grep miio_token, будет показан токен
+	2. камера: echo -n "<токен>" | xxd -p
+	3. пк: pip3 install python-miio
+	4. пк: miiocli chuangmicamera --ip 192.168.1.70 --token <токен, пропущенный через xxd> rotate [left|right|up|down]

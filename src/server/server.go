@@ -7,31 +7,41 @@ import (
 )
 
 var strippedframe []byte
+var framesize int
 
 func main() {
-	// listen to incoming udp packets
 	udpServer, err := net.ListenPacket("udp", ":1053")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer udpServer.Close()
 
-	// myfile, err := os.Create("/tmp/testvideoraw.mp4")
+	// myfile, err := os.Create("/tmp/tempvideo.mp4")
 	// checkErr(err)
 	for {
-		buf := make([]byte, 65536, 65536)
+		buf := make([]byte, 4096, 4096)
 		_, _, err := udpServer.ReadFrom(buf)
 		if err != nil {
 			continue
 		}
-		for j := 65536; j != 0; j-- {
-			if buf[j-1] != 0 {
-				strippedframe = buf[:j]
-				break
+		if Equal(buf[:4], []byte{0xFF, 0xFF, 0xFF, 0xFF}) {
+			for j := 4096; j != 0; j-- {
+				if buf[j-1] != 0 {
+					// myfile.Write(buf[96:j])
+					os.Stdout.Write(buf[96:j])
+					break
+				}
+			}
+
+		} else {
+			for j := 4096; j != 0; j-- {
+				if buf[j-1] != 0 {
+					// myfile.Write(buf[:j])
+					os.Stdout.Write(buf[:j])
+					break
+				}
 			}
 		}
-
-		os.Stdout.Write(strippedframe)
 	}
 
 }
@@ -41,3 +51,16 @@ func checkErr(err error) {
 		log.Fatal(err)
 	}
 }
+
+func Equal(a, b []byte) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i, v := range a {
+		if v != b[i] {
+			return false
+		}
+	}
+	return true
+}
+

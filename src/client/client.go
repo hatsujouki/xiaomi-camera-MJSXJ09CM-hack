@@ -14,7 +14,7 @@ import (
 
 func checkErr(err error) {
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Stopped due to checkErr\n", err)
 	}
 }
 
@@ -22,6 +22,9 @@ var msg1, msg2 unix.Msghdr
 var iov [2]unix.Iovec
 
 func main() {
+	// IDR_W_RADL := 0x26
+	// TRAIL_R := 0x02
+
 	if len(os.Args) < 2 || os.Args[1] == "" {
 		fmt.Println("Use ./client 192.168.1.65:1053")
 		os.Exit(1)
@@ -75,33 +78,59 @@ func main() {
 	err = syscall.EpollCtl(epollfd, syscall.EPOLL_CTL_ADD, sockFd, &socketEpoll)
 	checkErr(err)
 
-	// myfile, err := os.Create("/mnt/sdcard/testvideoraw.mp4")
-	// checkErr(err)
 	log.Print("start")
 
-	packagelen := 0
+	frameLenLittle := 0
+
 	for {
 		_, _, err = unix.Syscall(unix.SYS_RECVMSG, uintptr(sockFd), uintptr(unsafe.Pointer(&msg2)), uintptr(syscall.MSG_NOSIGNAL))
 		if err == syscall.EAGAIN {
 			_, err = syscall.EpollWait(epollfd, []syscall.EpollEvent{socketEpoll}, 59743)
 			checkErr(err)
+			// ниже я пытался решить проблему с тем, что в случайные моменты времени client убивается прерыванием. Камера начинает виснуть, как решить пока не понятно.
+			/*   _, err := syscall.EpollWait(epollfd, []syscall.EpollEvent{socketEpoll}, 59743)
+			     if err == syscall.EINTR {
+			                                  fmt.Println("interrupted")
+			                                  continue
+			                          } else if err != nil {
+			                                  log.Fatal(err)
+			     }
+			*/
+			/*   for {
+			      _, err := syscall.EpollWait(epollfd, []syscall.EpollEvent{socketEpoll}, 59743)
+			      if err == syscall.EINTR {
+			       fmt.Println("interrupted")
+			       continue
+			      } else if err != nil {
+			       log.Fatal(err)
+			      } else {
+			       break
+			      }
+			     }
+			*/
 		} else {
-			header, err := syscall.Mmap(int(controlmsg[12]), 0, 10, syscall.PROT_READ|syscall.PROT_WRITE, syscall.MAP_PRIVATE)
-			checkErr(err)
-			packagelen = int(binary.LittleEndian.Uint16(header[8:10]))
-			err = syscall.Munmap(header)
-			checkErr(err)
-			videoaddr, err := syscall.Mmap(int(controlmsg[12]), 0, packagelen+96, syscall.PROT_READ|syscall.PROT_WRITE, syscall.MAP_PRIVATE)
+			frameLenLittle = int(binary.LittleEndian.Uint32(iovepart2[4:8]))
+			videoaddr, err := syscall.Mmap(int(controlmsg[12]), 0, frameLenLittle, syscall.PROT_READ|syscall.PROT_WRITE, syscall.MAP_PRIVATE)
 			checkErr(err)
 
-			_, err = conn.Write(videoaddr[96:])
-			if err != nil {
-				println("Write data failed:", err.Error())
-				continue
+			/*   if Equal(videoaddr[100:102], []byte{0x40, 0x01}){
+			      if videoaddr[185] == byte(IDR_W_RADL) {
+			       fmt.Println("IDR_W_RADL")
+			      }
+			     } else {
+			      if Equal(videoaddr[100:102], []byte{byte(TRAIL_R), 0x01}){
+			       fmt.Println("TRAIL_R")
+			      }
+			     }
+			*/
+			for i := 0; i < frameLenLittle; i += 4096 {
+				_, err = conn.Write(videoaddr[i : i+4096])
+				if err != nil {
+					println("Write data failed:", err.Error())
+					continue
+				}
 			}
 
-			// _, err = myfile.Write(videoaddr)
-			// checkErr(err)
 			err = syscall.Munmap(videoaddr)
 			checkErr(err)
 			err = syscall.Close(int(controlmsg[12]))
@@ -110,3 +139,16 @@ func main() {
 	}
 	log.Print("stop")
 }
+
+func Equal(a, b []byte) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i, v := range a {
+		if v != b[i] {
+			return false
+		}
+	}
+	return true
+}
+
